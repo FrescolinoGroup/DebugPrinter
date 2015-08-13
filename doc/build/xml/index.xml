@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.8.6">
+  <compound refid="classDebugPrinter_1_1DebugPrinter" kind="class"><name>DebugPrinter::DebugPrinter</name>
+    <member refid="classDebugPrinter_1_1DebugPrinter_1a8c10746fa6df704240007e3190c6ad34" kind="variable"><name>outstream</name></member>
+    <member refid="classDebugPrinter_1_1DebugPrinter_1a8d79e27d4196ee873c70518fd8295430" kind="variable"><name>_prec</name></member>
+    <member refid="classDebugPrinter_1_1DebugPrinter_1a48e53ea985b5421157b683cea5593a0a" kind="variable"><name>hcol</name></member>
+    <member refid="classDebugPrinter_1_1DebugPrinter_1a7cc8485da343d4d37ebe2fc0c24716ab" kind="variable"><name>hcol_r</name></member>
+    <member refid="classDebugPrinter_1_1DebugPrinter_1a6e500dfed26961b90fcf60b5de7e176a" kind="variable"><name>max_backtrace</name></member>
+    <member refid="classDebugPrinter_1_1DebugPrinter_1a074b18ae19d725d1d397abc029a69ede" kind="variable"><name>max_demangled</name></member>
+    <member refid="classDebugPrinter_1_1DebugPrinter_1a019ee8cb90e41050609edce2850a6c29" kind="function"><name>DebugPrinter</name></member>
+    <member refid="classDebugPrinter_1_1DebugPrinter_1a6b01002e7ab758be967a0aa8a1a36e22" kind="function"><name>operator=</name></member>
+    <member refid="classDebugPrinter_1_1DebugPrinter_1adc6146083f3efae9b18fdd70c6de3d6b" kind="function"><name>set_precision</name></member>
+    <member refid="classDebugPrinter_1_1DebugPrinter_1aae1612f74ea64d676a4370781f562ca8" kind="function"><name>set_color</name></member>
+    <member refid="classDebugPrinter_1_1DebugPrinter_1af0a7b54783dbdbd3e9b7abe647327e86" kind="function"><name>set_color</name></member>
+    <member refid="classDebugPrinter_1_1DebugPrinter_1a17cd338fe9aad8265b384d915e533cb4" kind="function"><name>operator()</name></member>
+    <member refid="classDebugPrinter_1_1DebugPrinter_1af19e733886f46cd89f7970c7159be7c1" kind="function"><name>operator()</name></member>
+    <member refid="classDebugPrinter_1_1DebugPrinter_1ae001e5dafe40704db15d719f450c7226" kind="function"><name>type</name></member>
+    <member refid="classDebugPrinter_1_1DebugPrinter_1a9b41d1bf3e6c5caa897b5d8cdf100358" kind="function"><name>stack</name></member>
+    <member refid="classDebugPrinter_1_1DebugPrinter_1aeaf2418ff705b6cdce46c44e4d38b820" kind="friend"><name>operator&lt;&lt;</name></member>
+    <member refid="classDebugPrinter_1_1DebugPrinter_1a5370804f8c7f3e318a0c16be6320cb62" kind="friend"><name>operator&lt;&lt;</name></member>
+    <member refid="classDebugPrinter_1_1DebugPrinter_1a0e7699dcef67ae5c9b680c306483fede" kind="function"><name>demangle</name></member>
+    <member refid="classDebugPrinter_1_1DebugPrinter_1af36593ac78694f40cb36fce70768f26c" kind="function"><name>prog_part</name></member>
+    <member refid="classDebugPrinter_1_1DebugPrinter_1a897e97a986e6b4a2e8de0369b1796c81" kind="function"><name>mangled_part</name></member>
+    <member refid="classDebugPrinter_1_1DebugPrinter_1aa3e075a820528b259d2f81a5bbb9250f" kind="function"><name>offset_part</name></member>
+    <member refid="classDebugPrinter_1_1DebugPrinter_1a891acc572eb636e01d47a8641a3ce236" kind="function"><name>is_number</name></member>
+    <member refid="classDebugPrinter_1_1DebugPrinter_1a18c4e164ca8ba706044b4f111d721205" kind="function"><name>print_stream_impl</name></member>
+    <member refid="classDebugPrinter_1_1DebugPrinter_1ac69c59b0b774fbc09d19bfe3d3dec6ad" kind="function"><name>print_stream_impl</name></member>
+  </compound>
+  <compound refid="structDebugPrinter_1_1DebugPrinter_1_1has__stream" kind="struct"><name>DebugPrinter::DebugPrinter::has_stream</name>
+  </compound>
+  <compound refid="structDebugPrinter_1_1DebugPrinter_1_1has__stream__impl" kind="struct"><name>DebugPrinter::DebugPrinter::has_stream_impl</name>
+    <member refid="structDebugPrinter_1_1DebugPrinter_1_1has__stream__impl_1a1ff2722eeb73ed1e4ed547e1aeabf91f" kind="variable"><name>type</name></member>
+    <member refid="structDebugPrinter_1_1DebugPrinter_1_1has__stream__impl_1a05cff1d66ddacadcd0ca61af2ef71be8" kind="function"><name>check</name></member>
+    <member refid="structDebugPrinter_1_1DebugPrinter_1_1has__stream__impl_1a210ed8a80855bb6122723b3a8986894d" kind="function"><name>check</name></member>
+  </compound>
+  <compound refid="structDebugPrinter_1_1DebugPrinter_1_1m__and" kind="struct"><name>DebugPrinter::DebugPrinter::m_and</name>
+  </compound>
+  <compound refid="structDebugPrinter_1_1DebugPrinter_1_1m__and__impl" kind="struct"><name>DebugPrinter::DebugPrinter::m_and_impl</name>
+    <member refid="structDebugPrinter_1_1DebugPrinter_1_1m__and__impl_1a4b70f8fb604a361913361410167baa82" kind="typedef"><name>type</name></member>
+  </compound>
+  <compound refid="structDebugPrinter_1_1DebugPrinter_1_1m__and__impl_3_01B_00_01T_00_01U_8_8_8_4" kind="struct"><name>DebugPrinter::DebugPrinter::m_and_impl&lt; B, T, U...&gt;</name>
+    <member refid="structDebugPrinter_1_1DebugPrinter_1_1m__and__impl_3_01B_00_01T_00_01U_8_8_8_4_1aa6571e8b06a8cbd9f837379e0ea1fe6b" kind="typedef"><name>type</name></member>
+  </compound>
+  <compound refid="namespaceDebugPrinter" kind="namespace"><name>DebugPrinter</name>
+    <member refid="namespaceDebugPrinter_1a84cdd11670aac14787a516d46b50ccac" kind="variable"><name>dout</name></member>
+    <member refid="namespaceDebugPrinter_1a3589e9a5f09a9147262b4ba19b2f1781" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="namespaceDebugPrinter_1a28b780374a958974679a54ebdd2a53b9" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="namespaceDebugPrinter_1adb39e3941623fa2c8ed55a9fce80a6b4" kind="function"><name>operator,</name></member>
+    <member refid="namespaceDebugPrinter_1ae5b9a4d097ff1baf13ac104d070409cb" kind="function"><name>operator,</name></member>
+  </compound>
+  <compound refid="DebugPrinter_8hpp" kind="file"><name>DebugPrinter.hpp</name>
+    <member refid="DebugPrinter_8hpp_1ae3e8b035b1c591a1d6636afa44fecc6a" kind="define"><name>DEBUGPRINTER_HEADER</name></member>
+    <member refid="DebugPrinter_8hpp_1a0a88167ab87d4320d4147af3708c31e6" kind="define"><name>dout_HERE</name></member>
+    <member refid="DebugPrinter_8hpp_1a44cc474a9ec73fb3336f22700b81eb07" kind="define"><name>dout_FUNC</name></member>
+  </compound>
+  <compound refid="mainpage_8cpp" kind="file"><name>mainpage.cpp</name>
+  </compound>
+  <compound refid="dir_d44c64559bbebec7f509842c48db8b23" kind="dir"><name>include</name>
+  </compound>
+  <compound refid="indexpage" kind="page"><name>index</name>
+  </compound>
+</doxygenindex>

@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.6">
+  <compounddef id="structDebugPrinter_1_1DebugPrinter_1_1has__stream" kind="struct" prot="private">
+    <compoundname>DebugPrinter::DebugPrinter::has_stream</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">has_stream_impl::type&lt; T, S &amp; &gt;</basecompoundref>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+      <param>
+        <type>typename S</type>
+        <defval>std::ostream</defval>
+      </param>
+    </templateparamlist>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="3">
+        <label>has_stream_impl&lt; T, S &amp; &gt;::type</label>
+      </node>
+      <node id="2">
+        <label>DebugPrinter::DebugPrinter::has_stream&lt; T, S &gt;</label>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="5">
+        <label>has_stream_impl&lt; T, S &amp; &gt;::type</label>
+      </node>
+      <node id="4">
+        <label>DebugPrinter::DebugPrinter::has_stream&lt; T, S &gt;</label>
+        <childnode refid="5" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="396" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="396" bodyend="397"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

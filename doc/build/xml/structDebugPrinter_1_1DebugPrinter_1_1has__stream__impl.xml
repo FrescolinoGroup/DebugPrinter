@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.6">
+  <compounddef id="structDebugPrinter_1_1DebugPrinter_1_1has__stream__impl" kind="struct" prot="private">
+    <compoundname>DebugPrinter::DebugPrinter::has_stream_impl</compoundname>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+      <param>
+        <type>typename S</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structDebugPrinter_1_1DebugPrinter_1_1has__stream__impl_1a1ff2722eeb73ed1e4ed547e1aeabf91f" prot="public" static="no" mutable="no">
+        <type>decltype(check&lt; S &gt;(0)) typedef</type>
+        <definition>decltype(check&lt;S&gt;(0)) typedef DebugPrinter::DebugPrinter::has_stream_impl&lt; T, S &gt;::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="392" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="392" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="structDebugPrinter_1_1DebugPrinter_1_1has__stream__impl_1a05cff1d66ddacadcd0ca61af2ef71be8" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename U</type>
+          </param>
+        </templateparamlist>
+        <type>constexpr auto</type>
+        <definition>static constexpr auto DebugPrinter::DebugPrinter::has_stream_impl&lt; T, S &gt;::check</definition>
+        <argsstring>(int) -&gt; decltype(std::declval&lt; U &gt;()&lt;&lt; std::declval&lt; T &gt;(), std::true_type())</argsstring>
+        <name>check</name>
+        <param>
+          <type>int</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="387" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="structDebugPrinter_1_1DebugPrinter_1_1has__stream__impl_1a210ed8a80855bb6122723b3a8986894d" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename</type>
+          </param>
+        </templateparamlist>
+        <type>constexpr auto</type>
+        <definition>static constexpr auto DebugPrinter::DebugPrinter::has_stream_impl&lt; T, S &gt;::check</definition>
+        <argsstring>(...) -&gt; std::false_type</argsstring>
+        <name>check</name>
+        <param>
+          <type>...</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="391" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="385" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="385" bodyend="393"/>
+    <listofallmembers>
+      <member refid="structDebugPrinter_1_1DebugPrinter_1_1has__stream__impl_1a05cff1d66ddacadcd0ca61af2ef71be8" prot="public" virt="non-virtual"><scope>DebugPrinter::DebugPrinter::has_stream_impl</scope><name>check</name></member>
+      <member refid="structDebugPrinter_1_1DebugPrinter_1_1has__stream__impl_1a210ed8a80855bb6122723b3a8986894d" prot="public" virt="non-virtual"><scope>DebugPrinter::DebugPrinter::has_stream_impl</scope><name>check</name></member>
+      <member refid="structDebugPrinter_1_1DebugPrinter_1_1has__stream__impl_1a1ff2722eeb73ed1e4ed547e1aeabf91f" prot="public" virt="non-virtual"><scope>DebugPrinter::DebugPrinter::has_stream_impl</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>
