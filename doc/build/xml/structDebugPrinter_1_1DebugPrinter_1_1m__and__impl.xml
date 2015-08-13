@@ -26,14 +26,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="374" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="374" bodyend="-1"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="382" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="382" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="373" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="373" bodyend="375"/>
+    <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="381" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="381" bodyend="383"/>
     <listofallmembers>
       <member refid="structDebugPrinter_1_1DebugPrinter_1_1m__and__impl_1a4b70f8fb604a361913361410167baa82" prot="public" virt="non-virtual"><scope>DebugPrinter::DebugPrinter::m_and_impl</scope><name>type</name></member>
     </listofallmembers>

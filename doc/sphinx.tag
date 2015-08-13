@@ -2,7 +2,7 @@
 <tagfile>
   <compound kind="file">
     <name>DebugPrinter.hpp</name>
-    <path>/home/bryonak/c/DebugPrinter/</path>
+    <path>/home/bryonak/c/frescolino/fsc/DebugPrinter/</path>
     <filename>DebugPrinter_8hpp</filename>
     <class kind="class">DebugPrinter::DebugPrinter</class>
     <member kind="define">
@@ -103,7 +103,7 @@
   </compound>
   <compound kind="dir">
     <name>include</name>
-    <path>/home/bryonak/c/DebugPrinter/doc/include/</path>
+    <path>/home/bryonak/c/frescolino/fsc/DebugPrinter/doc/include/</path>
     <filename>dir_d44c64559bbebec7f509842c48db8b23.html</filename>
     <file>mainpage.cpp</file>
   </compound>

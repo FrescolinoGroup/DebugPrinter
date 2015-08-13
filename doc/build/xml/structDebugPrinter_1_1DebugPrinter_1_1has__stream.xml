@@ -36,7 +36,7 @@
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="396" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="396" bodyend="397"/>
+    <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="404" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="404" bodyend="405"/>
     <listofallmembers>
     </listofallmembers>
   </compounddef>

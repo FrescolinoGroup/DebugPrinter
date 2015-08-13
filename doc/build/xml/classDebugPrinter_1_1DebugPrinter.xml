@@ -20,7 +20,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="309" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="309" bodyend="-1"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="317" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="317" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classDebugPrinter_1_1DebugPrinter_1a8d79e27d4196ee873c70518fd8295430" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -33,7 +33,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="310" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="310" bodyend="-1"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="318" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="318" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classDebugPrinter_1_1DebugPrinter_1a48e53ea985b5421157b683cea5593a0a" prot="private" static="no" mutable="no">
         <type>std::string</type>
@@ -46,7 +46,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="311" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="311" bodyend="-1"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="319" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="319" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classDebugPrinter_1_1DebugPrinter_1a7cc8485da343d4d37ebe2fc0c24716ab" prot="private" static="no" mutable="no">
         <type>std::string</type>
@@ -59,7 +59,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="312" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="312" bodyend="-1"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="320" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="320" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-static-attrib">
@@ -75,7 +75,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="314" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="314" bodyend="-1"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="322" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="322" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classDebugPrinter_1_1DebugPrinter_1a074b18ae19d725d1d397abc029a69ede" prot="private" static="yes" mutable="no">
         <type>const unsigned int</type>
@@ -89,7 +89,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="315" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="315" bodyend="-1"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="323" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="323" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -104,7 +104,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="155" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="155" bodyend="155"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="163" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="163" bodyend="163"/>
       </memberdef>
       <memberdef kind="function" id="classDebugPrinter_1_1DebugPrinter_1a6b01002e7ab758be967a0aa8a1a36e22" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -129,7 +129,7 @@
 Default == <computeroutput>std::cout</computeroutput>. Change to any <computeroutput>std::ostream</computeroutput> with: <verbatim>dout = std::cerr;</verbatim> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="166" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="166" bodyend="166"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="174" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="174" bodyend="174"/>
       </memberdef>
       <memberdef kind="function" id="classDebugPrinter_1_1DebugPrinter_1adc6146083f3efae9b18fdd70c6de3d6b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -154,7 +154,7 @@ Default == <computeroutput>std::cout</computeroutput>. Change to any <computerou
 Default == 5. Example usage: <verbatim>dout.set_precision(12);</verbatim> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="167" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="167" bodyend="167"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="175" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="175" bodyend="175"/>
       </memberdef>
       <memberdef kind="function" id="classDebugPrinter_1_1DebugPrinter_1aae1612f74ea64d676a4370781f562ca8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -179,7 +179,7 @@ Default == 5. Example usage: <verbatim>dout.set_precision(12);</verbatim> </para
 Assumes a <computeroutput>bash</computeroutput> compatible terminal and sets the <computeroutput>operator()</computeroutput> highlighting color, for example cyan ( == &quot;36&quot; == default): <verbatim>dout.set_color(&quot;36&quot;);</verbatim> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="168" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="168" bodyend="173"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="176" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="176" bodyend="181"/>
       </memberdef>
       <memberdef kind="function" id="classDebugPrinter_1_1DebugPrinter_1af0a7b54783dbdbd3e9b7abe647327e86" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -193,7 +193,7 @@ Assumes a <computeroutput>bash</computeroutput> compatible terminal and sets the
 </verbatim></para><para>For bash color codes check <ulink url="http://www.tldp.org/HOWTO/Bash-Prompt-HOWTO/x329.html">http://www.tldp.org/HOWTO/Bash-Prompt-HOWTO/x329.html</ulink> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="174" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="174" bodyend="177"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="182" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="182" bodyend="185"/>
       </memberdef>
       <memberdef kind="function" id="classDebugPrinter_1_1DebugPrinter_1a17cd338fe9aad8265b384d915e533cb4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -249,7 +249,7 @@ Assumes a <computeroutput>bash</computeroutput> compatible terminal and sets the
 Example usage: <verbatim>dout(label, object);  </verbatim> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="191" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="191" bodyend="196"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="199" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="199" bodyend="204"/>
       </memberdef>
       <memberdef kind="function" id="classDebugPrinter_1_1DebugPrinter_1af19e733886f46cd89f7970c7159be7c1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -280,7 +280,7 @@ Equivalent to <verbatim>dout(&quot;&gt;&gt;&gt; &quot;, obj, &quot;&quot;);
 </verbatim></para><para>Example usage: <verbatim>dout(label);  </verbatim> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="207" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="207" bodyend="207"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="215" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="215" bodyend="215"/>
       </memberdef>
       <memberdef kind="function" id="classDebugPrinter_1_1DebugPrinter_1ae001e5dafe40704db15d719f450c7226" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -302,7 +302,7 @@ Equivalent to <verbatim>dout(&quot;&gt;&gt;&gt; &quot;, obj, &quot;&quot;);
 <para><ref refid="classDebugPrinter_1_1DebugPrinter" kindref="compound">DebugPrinter</ref> member function documentation</para><para>Example usage: <verbatim>dout.type(object)</verbatim> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="214" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="214" bodyend="217"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="222" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="222" bodyend="225"/>
       </memberdef>
       <memberdef kind="function" id="classDebugPrinter_1_1DebugPrinter_1a9b41d1bf3e6c5caa897b5d8cdf100358" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -355,7 +355,7 @@ dout.stack(count, true);     // print in compact format
 dout_FUNC                    // shortcut for  dout.stack(1, true);</verbatim> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="221" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="221" bodyend="284"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="229" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="229" bodyend="292"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="friend">
@@ -383,7 +383,7 @@ dout_FUNC                    // shortcut for  dout.stack(1, true);</verbatim> </
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="158" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="407" bodyend="417"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="166" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="415" bodyend="425"/>
       </memberdef>
       <memberdef kind="friend" id="classDebugPrinter_1_1DebugPrinter_1a5370804f8c7f3e318a0c16be6320cb62" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>friend <ref refid="classDebugPrinter_1_1DebugPrinter" kindref="compound">DebugPrinter</ref> &amp;</type>
@@ -404,7 +404,7 @@ dout_FUNC                    // shortcut for  dout.stack(1, true);</verbatim> </
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="159" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="420" bodyend="425"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="167" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="428" bodyend="433"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -427,7 +427,7 @@ dout_FUNC                    // shortcut for  dout.stack(1, true);</verbatim> </
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="320" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="320" bodyend="325"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="328" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="328" bodyend="333"/>
       </memberdef>
       <memberdef kind="function" id="classDebugPrinter_1_1DebugPrinter_1af36593ac78694f40cb36fce70768f26c" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>std::string</type>
@@ -444,7 +444,7 @@ dout_FUNC                    // shortcut for  dout.stack(1, true);</verbatim> </
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="336" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="336" bodyend="338"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="344" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="344" bodyend="346"/>
       </memberdef>
       <memberdef kind="function" id="classDebugPrinter_1_1DebugPrinter_1a897e97a986e6b4a2e8de0369b1796c81" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>std::string</type>
@@ -461,7 +461,7 @@ dout_FUNC                    // shortcut for  dout.stack(1, true);</verbatim> </
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="339" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="339" bodyend="342"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="347" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="347" bodyend="350"/>
       </memberdef>
       <memberdef kind="function" id="classDebugPrinter_1_1DebugPrinter_1aa3e075a820528b259d2f81a5bbb9250f" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>std::string</type>
@@ -478,7 +478,7 @@ dout_FUNC                    // shortcut for  dout.stack(1, true);</verbatim> </
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="343" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="343" bodyend="346"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="351" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="351" bodyend="354"/>
       </memberdef>
       <memberdef kind="function" id="classDebugPrinter_1_1DebugPrinter_1a891acc572eb636e01d47a8641a3ce236" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -495,7 +495,7 @@ dout_FUNC                    // shortcut for  dout.stack(1, true);</verbatim> </
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="347" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="347" bodyend="351"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="355" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="355" bodyend="359"/>
       </memberdef>
       <memberdef kind="function" id="classDebugPrinter_1_1DebugPrinter_1a18c4e164ca8ba706044b4f111d721205" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -531,7 +531,7 @@ dout_FUNC                    // shortcut for  dout.stack(1, true);</verbatim> </
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="356" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="356" bodyend="362"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="364" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="364" bodyend="370"/>
       </memberdef>
       <memberdef kind="function" id="classDebugPrinter_1_1DebugPrinter_1ac69c59b0b774fbc09d19bfe3d3dec6ad" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -569,7 +569,7 @@ dout_FUNC                    // shortcut for  dout.stack(1, true);</verbatim> </
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="365" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="365" bodyend="368"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="373" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="373" bodyend="376"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -590,7 +590,7 @@ dout.type(object)            // RTTI for given object
 dout = std::cout             // set output stream
 dout.set_precision(13)       // set decimal display precision
 dout.set_color(&quot;31&quot;)        // set terminal highlighting color</verbatim> </para>    </detaileddescription>
-    <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="147" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="147" bodyend="399"/>
+    <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="155" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="155" bodyend="407"/>
     <listofallmembers>
       <member refid="classDebugPrinter_1_1DebugPrinter_1a8d79e27d4196ee873c70518fd8295430" prot="private" virt="non-virtual"><scope>DebugPrinter::DebugPrinter</scope><name>_prec</name></member>
       <member refid="classDebugPrinter_1_1DebugPrinter_1a019ee8cb90e41050609edce2850a6c29" prot="public" virt="non-virtual"><scope>DebugPrinter::DebugPrinter</scope><name>DebugPrinter</name></member>

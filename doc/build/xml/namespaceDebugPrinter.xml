@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="446" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="446" bodyend="-1"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="454" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="454" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="func">
@@ -44,7 +44,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="407" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="407" bodyend="417"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="415" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="415" bodyend="425"/>
       </memberdef>
       <memberdef kind="function" id="namespaceDebugPrinter_1a28b780374a958974679a54ebdd2a53b9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classDebugPrinter_1_1DebugPrinter" kindref="compound">DebugPrinter</ref> &amp;</type>
@@ -65,7 +65,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="420" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="420" bodyend="425"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="428" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="428" bodyend="433"/>
       </memberdef>
       <memberdef kind="function" id="namespaceDebugPrinter_1adb39e3941623fa2c8ed55a9fce80a6b4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -91,7 +91,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="429" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="429" bodyend="431"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="437" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="437" bodyend="439"/>
       </memberdef>
       <memberdef kind="function" id="namespaceDebugPrinter_1ae5b9a4d097ff1baf13ac104d070409cb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classDebugPrinter_1_1DebugPrinter" kindref="compound">DebugPrinter</ref> &amp;</type>
@@ -112,13 +112,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="434" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="434" bodyend="437"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="442" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="442" bodyend="445"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="142" column="1"/>
+    <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="150" column="1"/>
   </compounddef>
 </doxygen>

@@ -29,14 +29,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="378" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="378" bodyend="-1"/>
+        <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="386" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="386" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" line="377" column="1" bodyfile="/home/bryonak/c/DebugPrinter/DebugPrinter.hpp" bodystart="377" bodyend="379"/>
+    <location file="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" line="385" column="1" bodyfile="/home/bryonak/c/frescolino/fsc/DebugPrinter/DebugPrinter.hpp" bodystart="385" bodyend="387"/>
     <listofallmembers>
       <member refid="structDebugPrinter_1_1DebugPrinter_1_1m__and__impl_3_01B_00_01T_00_01U_8_8_8_4_1aa6571e8b06a8cbd9f837379e0ea1fe6b" prot="public" virt="non-virtual"><scope>DebugPrinter::DebugPrinter::m_and_impl&lt; B, T, U...&gt;</scope><name>type</name></member>
     </listofallmembers>
