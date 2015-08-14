@@ -8,7 +8,7 @@
 //~ #define DEBUGPRINTER_OFF
 //~ #define DEBUGPRINTER_NO_EXECINFO
 //~ #define DEBUGPRINTER_NO_CXXABI
-#include "DebugPrinter.hpp"
+#include "../DebugPrinter.hpp"
 using namespace DebugPrinter;
 
 template <typename T>

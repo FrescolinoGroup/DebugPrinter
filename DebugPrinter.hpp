@@ -365,8 +365,8 @@ class DebugPrinter {
       int dummy;
       std::string stream = typeid(*outstream).name();
       *outstream << "DebugPrinter error: object of type "; type(obj);
-      *outstream << "                    has no suitable " << demangle(stream, dummy)
-                 << " operator<< overload." << std::endl;
+      *outstream << "                    has no suitable "
+                 << demangle(stream, dummy) << " operator<< overload." << std::endl;
   }
   template <bool B, typename U, typename V>
   typename std::enable_if<B, void>::type

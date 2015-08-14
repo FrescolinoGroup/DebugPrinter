@@ -307,8 +307,8 @@ $(document).ready(function(){initNavTree('DebugPrinter_8hpp_source.html','');});
 <div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;      <span class="keywordtype">int</span> dummy;</div>
 <div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;      std::string stream = <span class="keyword">typeid</span>(*outstream).name();</div>
 <div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;      *outstream &lt;&lt; <span class="stringliteral">&quot;DebugPrinter error: object of type &quot;</span>; type(obj);</div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;      *outstream &lt;&lt; <span class="stringliteral">&quot;                    has no suitable &quot;</span> &lt;&lt; demangle(stream, dummy)</div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;                 &lt;&lt; <span class="stringliteral">&quot; operator&lt;&lt; overload.&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;      *outstream &lt;&lt; <span class="stringliteral">&quot;                    has no suitable &quot;</span></div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;                 &lt;&lt; demangle(stream, dummy) &lt;&lt; <span class="stringliteral">&quot; operator&lt;&lt; overload.&quot;</span> &lt;&lt; std::endl;</div>
 <div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;  }</div>
 <div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;  <span class="keyword">template</span> &lt;<span class="keywordtype">bool</span> B, <span class="keyword">typename</span> U, <span class="keyword">typename</span> V&gt;</div>
 <div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;  <span class="keyword">typename</span> std::enable_if&lt;B, void&gt;::type</div>
