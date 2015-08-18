@@ -36,7 +36,7 @@
  * frame names and a _c++filt_-ready output.
  * 
  * 
- * \class DebugPrinter::DebugPrinter
+ * \class fsc::DebugPrinter
  * \brief Class for global static `dout` object
  * 
  * #### Usage:
@@ -63,13 +63,13 @@
 /**
  * DebugPrinter member function documentation
  * 
- * \fn inline void DebugPrinter::DebugPrinter::type(T obj)
+ * \fn inline void fsc::DebugPrinter::type(T obj)
  * \brief Prints the RTTI for given object
  * \details Example usage:
  * 
  *     dout.type(object)
  * 
- * \fn void DebugPrinter::DebugPrinter::stack() const
+ * \fn void fsc::DebugPrinter::stack() const
  * \brief Prints a stack trace
  * \param backtrace_size  print at most this many frames
  * \param compact         only print function names
@@ -81,21 +81,21 @@
  *     dout.stack(count, true);     // print in compact format
  *     dout_FUNC                    // shortcut for  dout.stack(1, true);
  * 
- * \fn inline void DebugPrinter::DebugPrinter::operator=(std::ostream & os)
+ * \fn inline void fsc::DebugPrinter::operator=(std::ostream & os)
  * \brief Assignment operator for changing streams
  * \param os  output stream to use
  * \details Default == `std::cout`. Change to any `std::ostream` with:
  * 
  *     dout = std::cerr;
  * 
- * \fn inline void DebugPrinter::DebugPrinter::set_precision(int prec)
+ * \fn inline void fsc::DebugPrinter::set_precision(int prec)
  * \brief Number of displayed decimal digits
  * \param prec  desired precision
  * \details Default == 5. Example usage:
  * 
  *     dout.set_precision(12);
  * 
- * \fn inline void DebugPrinter::DebugPrinter::set_color(std::string str)
+ * \fn inline void fsc::DebugPrinter::set_color(std::string str)
  * \brief Highlighting color
  * \param str  color code
  * \details
@@ -104,7 +104,7 @@
  * 
  *     dout.set_color("36");
  * 
- * \fn inline void DebugPrinter::DebugPrinter::set_color()
+ * \fn inline void fsc::DebugPrinter::set_color()
  * \brief Remvoe highlighting color
  * \details No color highlighting (e.g. when writing to a file) Usage example:
  * 
