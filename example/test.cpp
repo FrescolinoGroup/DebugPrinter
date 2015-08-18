@@ -9,7 +9,7 @@
 //~ #define DEBUGPRINTER_NO_EXECINFO
 //~ #define DEBUGPRINTER_NO_CXXABI
 #include "../DebugPrinter.hpp"
-using namespace DebugPrinter;
+using namespace fsc;
 
 template <typename T>
 class Foo { public:
