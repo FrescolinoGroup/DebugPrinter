@@ -147,7 +147,7 @@
 
 #endif // DEBUGPRINTER_OFF
 
-namespace DebugPrinter {
+namespace fsc {
 
 #ifndef DEBUGPRINTER_OFF
 
@@ -502,7 +502,7 @@ static DebugPrinter dout;
 
 #endif // DEBUGPRINTER_OFF
 
-} // namespace DebugPrinter
+} // namespace fsc
 
 #endif // DEBUGPRINTER_HEADER
 
