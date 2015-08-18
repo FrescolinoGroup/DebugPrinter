@@ -3,8 +3,6 @@
 
 :debugprinter:`index`
 
-:debugprinter:`include`
-
 :debugprinter:`include/mainpage.cpp`
 
 :debugprinter:`DebugPrinter`
