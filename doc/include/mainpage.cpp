@@ -4,6 +4,6 @@
  * 
  * \copydoc DebugPrinter.hpp
  * 
- * \details \copydetails DebugPrinter::DebugPrinter
+ * \details \copydetails fsc::DebugPrinter
  * 
  */
