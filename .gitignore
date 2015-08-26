@@ -16,3 +16,5 @@ MANIFEST
 # documentation
 doc/build
 doc/fsc/sphinx.tag
+
+example/test
