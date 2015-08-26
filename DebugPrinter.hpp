@@ -161,6 +161,8 @@ namespace fsc {
 // DebugPrinter class, see documentation at the beginning of this file
 class DebugPrinter {
 
+//~ struct sigaction act;
+
   public:
 
 /*******************************************************************************
@@ -169,7 +171,9 @@ class DebugPrinter {
 
   DebugPrinter() : outstream(&std::cout), _prec(5), hcol("36") {
     #ifndef DEBUGPRINTER_NO_SEGVSTACK
-    signal(SIGSEGV, sigsegv_handler);
+    struct sigaction act;
+    act.sa_handler = sigsegv_handler;
+    sigaction(SIGSEGV, &act, NULL);
     #endif // DEBUGPRINTER_NO_SEGVSTACK
   }
 
@@ -333,7 +337,9 @@ class DebugPrinter {
   static void sigsegv_handler(int signum) {
     std::cout << "DebugPrinter SIGSEGV handler caught signal " << signum << std::endl;
     static_init().stack(max_backtrace, false, 3);
-    signal(SIGSEGV, SIG_DFL);
+    struct sigaction act;
+    act.sa_handler = SIG_DFL;
+    sigaction(SIGSEGV, &act, NULL);
   }
 
   #ifndef DEBUGPRINTER_NO_CXXABI
