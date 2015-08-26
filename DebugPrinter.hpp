@@ -35,6 +35,9 @@
  * your libc distribution. The stack and type methods will then print raw stack
  * frame names and a _c++filt_-ready output.
  * 
+ * Pass `DEBUGPRINTER_NO_SEGVSTACK` to turn off automatic stack tracing when a
+ * segmentation fault occurs.
+ * 
  * 
  * \class fsc::DebugPrinter
  * \brief Class for global static `dout` object
@@ -43,20 +46,20 @@
  * For details and more examples, see the DebugPrinter member function
  * documentation.
  * 
- *     using namespace DebugPrinter;
+ *     using namespace fsc;
  * 
  *     dout << "foo" << std::endl;
  *     dout, var , 5, " bar ", 6 << " foobar " << 7, 8;
  * 
  *     dout(object);                // highlights the object
- *     dout_HERE                    // shortcut for  dout(__func__, __LINE__);
+ *     dout_HERE                    // shortcut for  dout(__FILE__, __LINE__);
  *     dout_stack(2);               // print top two stack frames
  *     dout_FUNC                    // print current function signature
  *     dout.type(object)            // RTTI for given object
  * 
  *     dout = std::cout             // set output stream
  *     dout.set_precision(13)       // set decimal display precision
- *     dout.set_color("31")        // set terminal highlighting color
+ *     dout.set_color("31")         // set terminal highlighting color
  */
 
 
@@ -74,7 +77,10 @@
  * \param backtrace_size  print at most this many frames
  * \param compact         only print function names
  * \param begin           starting offset
- * \details Example usage:
+ * \details
+ * Prints one line per stack frame, consisting of the binary object name, the
+ * demangled function name, and the offset within the function and the binary.
+ * Example usage:
  * 
  *     dout.stack();                // print a full stack trace
  *     dout.stack(count);           // print at most (int)count frames
@@ -100,18 +106,18 @@
  * \param str  color code
  * \details
  * Assumes a `bash` compatible terminal and sets the `operator()` highlighting
- * color, for example cyan ( == "36" == default):
+ * color (also used for `dout_HERE`), for example cyan ( == "36" == default):
  * 
  *     dout.set_color("36");
+ * 
+ * For bash color codes check
+ * http://www.tldp.org/HOWTO/Bash-Prompt-HOWTO/x329.html
  * 
  * \fn inline void fsc::DebugPrinter::set_color()
  * \brief Remvoe highlighting color
  * \details No color highlighting (e.g. when writing to a file) Usage example:
  * 
  *     dout.set_color();
- * 
- * For bash color codes check
- * http://www.tldp.org/HOWTO/Bash-Prompt-HOWTO/x329.html
  * 
  * \def dout_HERE
  * \brief shortcut
@@ -135,6 +141,7 @@
 #include <iomanip>
 #include <typeinfo>
 #include <cstdlib>
+#include <signal.h>
 #include <algorithm>
 
 #ifndef DEBUGPRINTER_NO_EXECINFO
@@ -160,7 +167,11 @@ class DebugPrinter {
  * Ctor and friends
  */
 
-  DebugPrinter() : outstream(&std::cout), _prec(5), hcol("36") {}
+  DebugPrinter() : outstream(&std::cout), _prec(5), hcol("36") {
+    #ifndef DEBUGPRINTER_NO_SEGVSTACK
+    signal(SIGSEGV, sigsegv_handler);
+    #endif // DEBUGPRINTER_NO_SEGVSTACK
+  }
 
   template <typename T>
   friend DebugPrinter & operator<<(DebugPrinter & d, const T& output);
@@ -248,24 +259,28 @@ class DebugPrinter {
     #ifndef DEBUGPRINTER_NO_CXXABI
 
     for(int i = begin; i < end; ++i) {
-      std::string prog = "  " + prog_part(std::string(symbols[i])) + ":  ";
-      std::string mangled = mangled_part(std::string(symbols[i]));
-      std::string offset = "  +" + offset_part(std::string(symbols[i]));
-      if(compact == true) { prog = ""; offset = ""; }
+      std::string line = std::string(symbols[i]);
+      std::string prog = prog_part(line);
+      std::string mangled = mangled_part(line);
+      std::string offset = offset_part(line);
+      std::string mainoffset = address_part(line);
       int status;
       std::string demangled = demangle(mangled, status);
       switch (status) {
         case -1:
           out << " Error: Could not allocate memory!" << std::endl;
           break;
-        case -2:  // invalid name under the C++ ABI mangling rules
-          out << prog << mangled << offset << std::endl;
-          break;
         case -3:
           out << " Error: Invalid argument to demangle()" << std::endl;
           break;
+        case -2:  // invalid name under the C++ ABI mangling rules
+          demangled = mangled;
         default:
-          out << prog << demangled << offset << std::endl;
+          if(compact == false)
+            out << "  " << prog << ":  " << demangled << "  "
+                << offset << "  [+" << mainoffset << "]"<< std::endl;
+          else
+            out << demangled << std::endl;
       }
     }
     if(compact == false) out << std::endl;
@@ -291,18 +306,9 @@ class DebugPrinter {
     free(symbols);
   }
 
-  // The dout_FUNC macro pollutes the namespace but is way more convenient
-  //~ #ifndef DEBUGPRINTER_NO_CXXABI
-  //~ void func() { stack(1, true, 2); }
-  //~ #endif // DEBUGPRINTER_NO_CXXABI
-
   #else // DEBUGPRINTER_NO_EXECINFO
 
-  void stack(
-      const int backtrace_size = max_backtrace,
-      const bool compact = false,
-      const int begin = 1 /* should stay 1 except for special needs */
-  ) const {
+  void stack(...) const {
     *outstream << "DebugPrinter::stack() not available" << std::endl;
   }
 
@@ -322,6 +328,13 @@ class DebugPrinter {
   static const unsigned int max_backtrace = 50;
   static const unsigned int max_demangled = 4096;
 
+  static DebugPrinter & static_init() { static DebugPrinter d; return d; }
+
+  static void sigsegv_handler(int signum) {
+    std::cout << "DebugPrinter SIGSEGV handler caught signal " << signum << std::endl;
+    static_init().stack(max_backtrace, false, 3);
+    signal(SIGSEGV, SIG_DFL);
+  }
 
   #ifndef DEBUGPRINTER_NO_CXXABI
 
@@ -334,7 +347,7 @@ class DebugPrinter {
 
   #else // DEBUGPRINTER_NO_CXXABI
 
-  inline std::string demangle(const std::string & str, int & status) const {
+  inline std::string demangle(const std::string & str, int &) const {
     return str;
   }
 
@@ -346,11 +359,18 @@ class DebugPrinter {
   }
   inline std::string mangled_part(const std::string str) const {
     std::string::size_type pos = str.find("(") + 1;
+    if(str.find("+", pos) == std::string::npos) return "";
     return str.substr(pos, str.find("+", pos) - pos);
   }
   inline std::string offset_part(const std::string str) const {
-    std::string::size_type pos = str.find("+") + 1;
-    return str.substr(pos, str.find(")", pos) - pos);
+    std::string::size_type pos = str.find("+");
+    if(pos == std::string::npos) return "";
+    else return str.substr(pos, str.find(")", pos) - pos);
+  }
+  inline std::string address_part(const std::string str) const {
+    std::string::size_type pos = str.find("[");
+    if(pos == std::string::npos) return "";
+    else return str.substr(pos+1, str.find("]", pos) - pos-1);
   }
   bool is_number(const std::string& s) {
     std::string::const_iterator it = s.begin();
@@ -448,14 +468,12 @@ inline DebugPrinter & operator,(DebugPrinter & d,
  * Globals
  */
 
-
 // Heap allocate => no destructor call at program exit (wiped by OS).
 /** \brief Static global heap-allocated object.*/
 static DebugPrinter& dout = *new DebugPrinter;
 
-#define dout_HERE dout(__func__, __LINE__);
+#define dout_HERE dout(__FILE__ ,__LINE__);
 #define dout_FUNC dout.stack(1, true);
-
 
 /**
  * End
@@ -479,10 +497,7 @@ class DebugPrinter {
 
   template <typename T>
   inline void type(T) const {}
-  inline void stack() const {}
-  inline void stack(const int) const {}
-  inline void stack(const int, const bool) const {}
-  inline void stack(const int, const bool, const int) const {}
+  inline void stack(...) const {}
 };
 
 template <typename T>
