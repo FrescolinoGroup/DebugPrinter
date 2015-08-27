@@ -70,7 +70,8 @@ int main() {
 
     dout_HERE
 
-    dout.type(42);
+    dout_TYPE(42);
+    dout_TYPE(int);
     dout.type(b);
     dout.type(&Bar<double>::foo<int, std::string, 84>);
     dout.type(f1);

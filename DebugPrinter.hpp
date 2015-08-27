@@ -5,7 +5,7 @@
  * >           Creates a global static object named `dout` and defines the
  * >           macros: `dout_HERE`  `dout_FUNC`
  * \version    2015.0812
- * \author     Donjan Rodic, Mario Koenz, C. Frescolino
+ * \author     Donjan Rodic, Mario Könz, C. Frescolino
  * \date       2011-2015
  * \copyright  Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -125,10 +125,11 @@
  * \def dout_FUNC
  * \brief shortcut
  * 
+ * \def dout_TYPE
+ * \brief shortcut
+ * 
  ******************************************************************************/
- 
- 
-#pragma once
+
 
 /** \brief include guard */
 #ifndef DEBUGPRINTER_HEADER
@@ -189,12 +190,12 @@ class DebugPrinter {
     for(auto const & sig: sig_names()) {
         sigaction(sig.first, &act, NULL);
     }
-    
+
     #endif // DEBUGPRINTER_NO_SIGNALS
   }
   template <typename T>
-  friend DebugPrinter & operator<<(DebugPrinter & d, const T& output);
-  friend inline DebugPrinter & operator<<(DebugPrinter & d,
+  friend DebugPrinter & operator<<(DebugPrinter &, const T&);
+  friend inline DebugPrinter & operator<<(DebugPrinter &,
                                           std::ostream& (*pf)(std::ostream&));
 
 /*******************************************************************************
@@ -228,9 +229,7 @@ class DebugPrinter {
   template <typename T, typename U>
   inline void operator()(const T& label, const U& obj,
                          const std::string sc = ": ") const {
-
     print_stream_impl<m_and<has_stream<T>, has_stream<U> >::value>(label, obj, sc);
-
   }
   /** \brief Prints highlighted object
    *  \param obj    should have a std::ostream & operator<< overload
@@ -250,8 +249,7 @@ class DebugPrinter {
 
   template <typename T>
   inline void type(T obj) const {
-    int dummy;
-    *outstream << demangle( typeid(obj).name() , dummy) << std::endl;
+    detail::type_name(*this, std::string(typeid(obj).name()));
   }
 
   #ifndef DEBUGPRINTER_NO_EXECINFO
@@ -263,14 +261,14 @@ class DebugPrinter {
     ) const {
 
     std::ostream & out = *outstream;
-    int _end = -1;               // ignore last
+    int end_ = -1;               // ignore last
 
     void * stack[max_backtrace];
-    int r = backtrace(stack, backtrace_size+begin-_end);
+    int r = backtrace(stack, backtrace_size+begin-end_);
     char ** symbols = backtrace_symbols(stack, r);
     if(!symbols) return;
 
-    int end = r + _end;
+    int end = r + end_;
     if(compact == false)
       out << "DebugPrinter obtained " << end-begin << " stack frames:"
           << std::endl;
@@ -333,6 +331,15 @@ class DebugPrinter {
 
   #endif // DEBUGPRINTER_NO_EXECINFO
 
+  /// \cond DEBUGPRINTER_DONOTDOCME_HAVESOMEDECENCY_PLEASE
+  struct detail {
+    inline static void type_name(const DebugPrinter &dout, const std::string & name) {
+      int dummy;
+      *(dout.outstream) << dout.demangle(name, dummy) << std::endl;
+    }
+  };
+  /// \endcond
+
 /*******************************************************************************
  * Private parts
  */
@@ -351,7 +358,8 @@ class DebugPrinter {
 
   #ifndef DEBUGPRINTER_NO_SIGNALS
   static void signal_handler(int signum) {
-    std::cout << "DebugPrinter handler caught signal " << sig_names()[signum] << " (" << signum << ")" << std::endl;
+    std::cout << "DebugPrinter handler caught signal "
+              << sig_names()[signum] << " (" << signum << ")" << std::endl;
     static_init().stack(max_backtrace, false, 3);
     struct sigaction act;
     act.sa_handler = SIG_DFL;
@@ -501,6 +509,7 @@ static DebugPrinter& dout = *new DebugPrinter;
 
 #define dout_HERE fsc::dout(__FILE__ ,__LINE__);
 #define dout_FUNC fsc::dout.stack(1, true);
+#define dout_TYPE(x) DebugPrinter::detail::type_name(fsc::dout, typeid(x).name());
 
 /**
  * End DebugPrinter implementation
