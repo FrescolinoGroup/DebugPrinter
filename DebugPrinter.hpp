@@ -525,22 +525,32 @@ static DebugPrinter& dout = *new DebugPrinter;
  */
 
 /** \brief Print current line
- * shortcut for fsc::dout(__FILE__ ,__LINE__);
+ *  \details Shortcut for
+ * 
+ *      fsc::dout(__FILE__ ,__LINE__);
  */
 #define dout_HERE fsc::dout(__FILE__ ,__LINE__);
 
-/// \brief shortcut for fsc::dout.stack(1, true);
+/** \brief Print current function signature
+ *  \details Shortcut for
+ * 
+ *      fsc::dout.stack(1, true);
+ */
 #define dout_FUNC fsc::dout.stack(1, true);
 
-/// \brief shortcut for name=value information
+/** \brief Print 'name = value' of given variable
+ */
 #define dout_VAR(x) fsc::DebugPrinter::detail::var(fsc::dout, #x, x);
 
-/** \brief shortcut for type information. Note that you have to put parentheses
- *  around types with a comma in order to properly pass them:
+/** \brief Print demangled type information of given variable or type.
+ *  \details Note that you have to put parentheses around types declarations 
+ *  with a comma in order to properly pass them:
+ * 
  *      dout_TYPE( (std::map<int,int>) )*/
 #define dout_TYPE(x) fsc::DebugPrinter::detail::type_name(fsc::dout, typeid(x).name());
 
-/// \brief shortcut for fsc::dout.stack();
+/** \brief Shortcut for fsc::dout.stack();
+ */
 #define dout_STACK fsc::dout.stack();
 
 /**
