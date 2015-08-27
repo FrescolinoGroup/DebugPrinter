@@ -10,9 +10,8 @@
 //~ #define DEBUGPRINTER_OFF
 //~ #define DEBUGPRINTER_NO_EXECINFO
 //~ #define DEBUGPRINTER_NO_CXXABI
-//~ #define DEBUGPRINTER_NO_SEGVSTACK
+//~ #define DEBUGPRINTER_NO_SIGNALS
 #include "../DebugPrinter.hpp"
-using namespace fsc;
 using fsc::dout;
 
 #include <stdexcept>
@@ -22,6 +21,7 @@ class Foo { public:
     Foo() {
         dout_FUNC
     }
+    typedef T type;
 };
 
 template <typename T>
@@ -40,7 +40,8 @@ class Bar : public Foo<double> { public:
 
 };
 
-void f3() { dout.stack(); }  // inlined if -O2 or -O3
+//~ void f3() { dout_STACK }  // inlined if -O2 or -O3
+void f3() { dout.stack(2, false, 112); }  // inlined if -O2 or -O3
 void f2() { f3(); }
 void f1() { f2(); }
 
@@ -54,9 +55,11 @@ int main() {
     dout = std::cerr;
     dout.set_color("31");
 
-    //~ std::ofstream fs("debug.log");
-    //~ dout = fs;
-    //~ dout.set_color();
+    if(false) {  // for file output switch to true
+        std::ofstream fs("debug.log");
+        dout = fs;
+        dout.set_color();
+    }
 
     Bar<char&> b;
 
@@ -67,14 +70,20 @@ int main() {
     dout_HERE
 
     dout(b);
+    dout("label", b, "  ");
+    dout("label", "foo", "\t");
 
     dout_HERE
 
+    int x = 5;
+    dout_VAR(x);
+    dout_VAR(b);
+
     dout_TYPE(42);
-    dout_TYPE(int);
-    dout.type(b);
-    dout.type(&Bar<double>::foo<int, std::string, 84>);
-    dout.type(f1);
+    dout_TYPE(unsigned int);
+    dout_TYPE(b);
+    dout_TYPE((&Bar<double>::foo<int, std::string, 84>));
+    dout_TYPE(f1);
 
     dout_HERE
 

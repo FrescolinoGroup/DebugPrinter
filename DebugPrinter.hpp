@@ -2,9 +2,8 @@
  * 
  * \file       DebugPrinter.hpp
  * \brief      DebugPrinter header-only lib.
- * >           Creates a global static object named `dout` and defines the
- * >           macros: `dout_HERE`  `dout_FUNC`
- * \version    2015.0812
+ * >           Creates a static object named `dout` and defines debuging macros.
+ * \version    2015.0827
  * \author     Donjan Rodic, Mario Könz, C. Frescolino
  * \date       2011-2015
  * \copyright  Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,116 +21,24 @@
  * Link with `-rdynamic` in order to properly get `stack()` frame names and
  * useful `dout_FUNC` output.
  * 
- * _Note_: compiler optimisations may inline functions (shorter stack).
+ * _Note: compiler optimisations may inline functions (shorter stack)._
  * 
  * Pass `DEBUGPRINTER_OFF` to turn off all functionality provided here. You can
  * leave the debug statements in your code, since all methods and macros become
  * inline and trivial, and thus should be optimised away by your compiler.
  * 
- * Pass `DEBUGPRINTER_NO_EXECINFO` flag on Windows (disables `stack()` and
- * `dout_FUNC`).
+ * Pass `DEBUGPRINTER_NO_EXECINFO` flag on Windows (disables `stack()`,
+ * `dout_STACK` and `dout_FUNC`).
  * 
- * Pass `DEBUGPRINTER_NO_CXXABI` if you don't have a cxxabi demangle call in
+ * Pass `DEBUGPRINTER_NO_CXXABI` if you don't have a _cxxabi_ demangle call in
  * your libc distribution. The stack and type methods will then print raw stack
  * frame names and a _c++filt_-ready output.
  * 
  * Pass `DEBUGPRINTER_NO_SIGNALS` to turn off automatic stack tracing when 
- * certain fatal signals occure (SIGSEGV, SIGSYS, SIGABRT, SIGFPE).
- * 
- * 
- * \class fsc::DebugPrinter
- * \brief Class for global static `dout` object
- * 
- * #### Usage:
- * For details and more examples, see the DebugPrinter member function
- * documentation.
- * 
- *     using namespace fsc;
- * 
- *     dout << "foo" << std::endl;
- *     dout, var , 5, " bar ", 6 << " foobar " << 7, 8;
- * 
- *     dout(object);                // highlights the object
- *     dout_HERE                    // shortcut for  dout(__FILE__, __LINE__);
- *     dout_stack(2);               // print top two stack frames
- *     dout_FUNC                    // print current function signature
- *     dout.type(object)            // RTTI for given object
- * 
- *     dout = std::cout             // set output stream
- *     dout.set_precision(13)       // set decimal display precision
- *     dout.set_color("31")         // set terminal highlighting color
- */
-
-
-/**
- * DebugPrinter member function documentation
- * 
- * \fn inline void fsc::DebugPrinter::type(T obj)
- * \brief Prints the RTTI for given object
- * \details Example usage:
- * 
- *     dout.type(object)
- * 
- * \fn void fsc::DebugPrinter::stack() const
- * \brief Prints a stack trace
- * \param backtrace_size  print at most this many frames
- * \param compact         only print function names
- * \param begin           starting offset
- * \details
- * Prints one line per stack frame, consisting of the binary object name, the
- * demangled function name, and the offset within the function and the binary.
- * Example usage:
- * 
- *     dout.stack();                // print a full stack trace
- *     dout.stack(count);           // print at most (int)count frames
- *     dout.stack(count, true);     // print in compact format
- *     dout_FUNC                    // shortcut for  dout.stack(1, true);
- * 
- * \fn inline void fsc::DebugPrinter::operator=(std::ostream & os)
- * \brief Assignment operator for changing streams
- * \param os  output stream to use
- * \details Default == `std::cout`. Change to any `std::ostream` with:
- * 
- *     dout = std::cerr;
- * 
- * \fn inline void fsc::DebugPrinter::set_precision(int prec)
- * \brief Number of displayed decimal digits
- * \param prec  desired precision
- * \details Default == 5. Example usage:
- * 
- *     dout.set_precision(12);
- * 
- * \fn inline void fsc::DebugPrinter::set_color(std::string str)
- * \brief Highlighting color
- * \param str  color code
- * \details
- * Assumes a `bash` compatible terminal and sets the `operator()` highlighting
- * color (also used for `dout_HERE`), for example cyan ( == "36" == default):
- * 
- *     dout.set_color("36");
- * 
- * For bash color codes check
- * http://www.tldp.org/HOWTO/Bash-Prompt-HOWTO/x329.html
- * 
- * \fn inline void fsc::DebugPrinter::set_color()
- * \brief Remvoe highlighting color
- * \details No color highlighting (e.g. when writing to a file) Usage example:
- * 
- *     dout.set_color();
- * 
- * \def dout_HERE
- * \brief shortcut
- * 
- * \def dout_FUNC
- * \brief shortcut
- * 
- * \def dout_TYPE
- * \brief shortcut
+ * certain fatal signals occur (`SIGSEGV`, `SIGSYS`, `SIGABRT`, `SIGFPE`).
  * 
  ******************************************************************************/
 
-
-/** \brief include guard */
 #ifndef DEBUGPRINTER_HEADER
 #define DEBUGPRINTER_HEADER
 
@@ -160,11 +67,43 @@
 
 #endif // DEBUGPRINTER_OFF
 
+/** \brief General fsc namespace */
 namespace fsc {
 
 #ifndef DEBUGPRINTER_OFF
 
-// DebugPrinter class, see documentation at the beginning of this file
+/** \brief Class for global static `dout` object
+ * 
+ *  #### Usage:
+ *  For details, see the documentation for fsc::DebugPrinter member functions
+ *  and DebugPrinter.hpp macros.
+ * 
+ *      // basic usage:
+ * 
+ *      dout_HERE                       // print current file and line
+ *      dout_FUNC                       // print current function signature
+ *      dout_STACK                      // print stack trace
+ *      dout_TYPE(int)                  // type information for given type
+ *      dout_TYPE((std::map<int,int>))  //  ... beware commas in macro arguments
+ *      dout_TYPE(var)                  // demangled RTTI of given variable
+ *      dout_VAR(var)                   // print 'name = value' of given variable
+ * 
+ * 
+ *      // advanced usage:
+ * 
+ *      using fsc::dout;
+ * 
+ *      dout << "foo" << std::endl;
+ *      dout, var , 5, " bar ", 6 << " foobar " << 7, 8, std::endl;
+ * 
+ *      dout(object);                 // highlights the object
+ *      dout(object, label, " at ");  // highlighted object, label and separator
+ *      dout_stack(4, false, 2);      // print 4 stack frames, omitting the first
+ * 
+ *      dout = std::cout              // set output stream
+ *      dout.set_precision(13)        // set decimal display precision
+ *      dout.set_color("31")          // set terminal highlighting color
+ */
 class DebugPrinter {
 
   using sig_type = uint;
@@ -202,14 +141,44 @@ class DebugPrinter {
  * Setters
  */
 
+  /** \brief Assignment operator for changing streams
+   *  \param os  output stream to use
+   *  \details Default == `std::cout`. Change to any `std::ostream` with:
+   * 
+   *      dout = std::cerr;
+   */
   inline void operator=(std::ostream & os) { outstream = &os; }
+
+  /** \brief Number of displayed decimal digits
+   *  \param prec  desired precision
+   *  \details Default == 5. Example usage:
+   * 
+   *      dout.set_precision(12);
+   */
   inline void set_precision(int prec) { prec_ = prec; }
+
+  /** \brief Highlighting color
+   *  \param str  color code
+   *  \details
+   *  Assumes a `bash` compatible terminal and sets the `operator()` highlighting
+   *  color (also used for `dout_HERE`), for example cyan ( == "36" == default):
+   * 
+   *      dout.set_color("36");
+   * 
+   *  For bash color codes check
+   *  http://www.tldp.org/HOWTO/Bash-Prompt-HOWTO/x329.html
+   */
   inline void set_color(std::string str) {  // no chaining <- returns void
     if(!is_number(str))
       throw std::runtime_error("DebugPrinter error: invalid set_color() argument");
     hcol_ = "\033[0;" + str + "m";
     hcol_r_ = "\033[0m";
   }
+  /** \brief Remove highlighting color
+   * \details No color highlighting (e.g. when writing to a file) Usage example:
+   * 
+   *     dout.set_color();
+   */
   inline void set_color() {  // no chaining <- returns void
     hcol_ = "";
     hcol_r_ = "";
@@ -219,39 +188,54 @@ class DebugPrinter {
  * Parentheses operators
  */
 
-  /** \brief Prints highlighted label and object
+  /** \brief Print highlighted label and object
    *  \param label  should have a std::ostream & operator<< overload
    *  \param obj    should have a std::ostream & operator<< overload
    *  \param sc     delimiter between label and object
-   *  \details Example usage:
+   *  \details If `label` or `obj` don't have the required operator << overloads,
+   *  the function will print an error instead. Example usage:
    * 
-   *      dout(label, object); */
+   *      dout(label, object);
+   *      dout(label, object, "\t");
+   */
   template <typename T, typename U>
   inline void operator()(const T& label, const U& obj,
                          const std::string sc = ": ") const {
     print_stream_impl<m_and<has_stream<T>, has_stream<U> >::value>(label, obj, sc);
   }
-  /** \brief Prints highlighted object
+  /** \brief Print highlighted object
    *  \param obj    should have a std::ostream & operator<< overload
    *  \details Equivalent to 
    * 
-   *      dout(">>> ", obj, "");
+   *      dout(">>>", obj, " ");
    * 
    *  Example usage:
    * 
-   *      dout(label); */
+   *      dout(object);
+   */
   template <typename T>
-  inline void operator()(const T& obj) const { operator()(">>> ", obj, ""); }
+  inline void operator()(const T& obj) const { operator()(">>>", obj, " "); }
 
 /*******************************************************************************
- * RTTI (type and stack methods)
+ * RTTI (stack)
  */
 
-  template <typename T>
-  inline void type(T obj) const {
-    detail::type_name(*this, std::string(typeid(obj).name()));
-  }
-
+/** \brief Print a stack trace
+ *  \param backtrace_size  print at most this many frames
+ *  \param compact         only print function names
+ *  \param begin           starting offset
+ *  \details
+ *  Print one line per stack frame, consisting of the binary object name, the
+ *  demangled function name, and the offset within the function and within the
+ *  binary.
+ *  Example usage:
+ * 
+ *      dout.stack();                // print a full stack trace
+ *      dout.stack(count);           // print at most (int)count frames
+ *      dout.stack(count, true);     // print in compact format
+ *      dout.stack(count, true, 2);  // and slice off the "first" frame
+ *      dout_FUNC                    // shortcut for  dout.stack(1, true);
+ */
   #ifndef DEBUGPRINTER_NO_EXECINFO
 
   void stack(
@@ -331,12 +315,23 @@ class DebugPrinter {
 
   #endif // DEBUGPRINTER_NO_EXECINFO
 
+/*******************************************************************************
+ * "Private" parts
+ */
+ 
   /// \cond DEBUGPRINTER_DONOTDOCME_HAVESOMEDECENCY_PLEASE
   struct detail {
+
+    template <typename T>
+    inline static void var(const DebugPrinter &dout, std::string name, T & val) {
+      dout.var_impl<has_stream<T>::value>(name, val);
+    }
+
     inline static void type_name(const DebugPrinter &dout, const std::string & name) {
       int dummy;
       *(dout.outstream) << dout.demangle(name, dummy) << std::endl;
     }
+
   };
   /// \endcond
 
@@ -384,6 +379,13 @@ class DebugPrinter {
 
   #endif // DEBUGPRINTER_NO_CXXABI
 
+  // type() not public, since it has a weaker interface (no types as arguments)
+  // than dout_TYPE
+  template <typename T>
+  inline void type(T obj) const {
+    detail::type_name(*this, std::string(typeid(obj).name()));
+  }
+
 
   inline std::string prog_part(const std::string str) const {
     return str.substr(0, str.find("("));
@@ -409,13 +411,28 @@ class DebugPrinter {
                             [](char c) { return !std::isdigit(c); }) == s.end();
   }
 
-  // Select with SFINAE and helper metatemplates
-  template <bool B, typename U, typename V>
+  template <bool B, typename T>
   typename std::enable_if<!B, void>::type
-    print_stream_impl(const U&, const V& obj, const std::string&) const {
+    var_impl(std::string & name, T & val) const {
       int dummy;
       std::string stream = typeid(*outstream).name();
-      *outstream << "DebugPrinter error: object of type "; type(obj);
+      *outstream << "DebugPrinter error: object named '" << name << "' of type "; type(val);
+      *outstream << "                    has no suitable "
+                 << demangle(stream, dummy) << " operator<< overload." << std::endl;
+  }
+  template <bool B, typename T>
+  typename std::enable_if<B, void>::type
+    var_impl(std::string & name, T & val) const {
+      *outstream << name << " = " << val << std::endl;
+  }
+
+  template <bool B, typename U, typename V>
+  typename std::enable_if<!B, void>::type
+    print_stream_impl(const U& label, const V& obj, const std::string&) const {
+      int dummy;
+      std::string stream = typeid(*outstream).name();
+      *outstream << "DebugPrinter error: object of type ";
+                    has_stream<U>::value ? type(obj) : type(label);
       *outstream << "                    has no suitable "
                  << demangle(stream, dummy) << " operator<< overload." << std::endl;
   }
@@ -452,7 +469,7 @@ class DebugPrinter {
   };
 
   template<typename T, typename S = std::ostream>
-  struct has_stream : public has_stream_impl<T, S&>::type {  // that ::type has ::value
+  struct has_stream : public has_stream_impl<T, S&>::type {  // that ::type implicitly has ::value
   };
 
 };
@@ -507,9 +524,24 @@ static DebugPrinter& dout = *new DebugPrinter;
  * Macros
  */
 
+/** \brief Print current line
+ * shortcut for fsc::dout(__FILE__ ,__LINE__);
+ */
 #define dout_HERE fsc::dout(__FILE__ ,__LINE__);
+
+/// \brief shortcut for fsc::dout.stack(1, true);
 #define dout_FUNC fsc::dout.stack(1, true);
-#define dout_TYPE(x) DebugPrinter::detail::type_name(fsc::dout, typeid(x).name());
+
+/// \brief shortcut for name=value information
+#define dout_VAR(x) fsc::DebugPrinter::detail::var(fsc::dout, #x, x);
+
+/** \brief shortcut for type information. Note that you have to put parentheses
+ *  around types with a comma in order to properly pass them:
+ *      dout_TYPE( (std::map<int,int>) )*/
+#define dout_TYPE(x) fsc::DebugPrinter::detail::type_name(fsc::dout, typeid(x).name());
+
+/// \brief shortcut for fsc::dout.stack();
+#define dout_STACK fsc::dout.stack();
 
 /**
  * End DebugPrinter implementation
@@ -549,6 +581,9 @@ static DebugPrinter dout;
 
 #define dout_HERE ;
 #define dout_FUNC ;
+#define dout_VAR ;
+#define dout_TYPE ;
+#define dout_STACK ;
 
 
 #endif // DEBUGPRINTER_OFF
