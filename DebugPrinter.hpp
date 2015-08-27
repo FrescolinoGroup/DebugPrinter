@@ -5,7 +5,7 @@
  * >           Creates a global static object named `dout` and defines the
  * >           macros: `dout_HERE`  `dout_FUNC`
  * \version    2015.0812
- * \author     Donjan Rodic, C. Frescolino
+ * \author     Donjan Rodic, Mario Koenz, C. Frescolino
  * \date       2011-2015
  * \copyright  Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,8 +35,8 @@
  * your libc distribution. The stack and type methods will then print raw stack
  * frame names and a _c++filt_-ready output.
  * 
- * Pass `DEBUGPRINTER_NO_SEGVSTACK` to turn off automatic stack tracing when a
- * segmentation fault occurs.
+ * Pass `DEBUGPRINTER_NO_SIGNALS` to turn off automatic stack tracing when 
+ * certain fatal signals occure (SIGSEGV, SIGSYS, SIGABRT, SIGFPE).
  * 
  * 
  * \class fsc::DebugPrinter
@@ -143,6 +143,7 @@
 #include <cstdlib>
 #include <signal.h>
 #include <algorithm>
+#include <stdexcept>
 
 #ifndef DEBUGPRINTER_NO_EXECINFO
 #include <execinfo.h>
@@ -151,6 +152,10 @@
 #ifndef DEBUGPRINTER_NO_CXXABI
 #include <cxxabi.h>
 #endif // DEBUGPRINTER_NO_CXXABI
+
+#ifndef DEBUGPRINTER_NO_SIGNALS
+#include <map>
+#endif // DEBUGPRINTER_NO_SIGNALS
 
 #endif // DEBUGPRINTER_OFF
 
@@ -161,22 +166,32 @@ namespace fsc {
 // DebugPrinter class, see documentation at the beginning of this file
 class DebugPrinter {
 
-//~ struct sigaction act;
-
+  using sig_type = uint;
+  static std::map<sig_type, std::string> sig_names() {
+    std::map<sig_type, std::string> res;
+    res[SIGABRT] = "SIGABRT";
+    res[SIGFPE] = "SIGFPE";
+    res[SIGSEGV] = "SIGSEGV";
+    res[SIGSYS] = "SIGSYS";
+    return res;
+  }
   public:
 
 /*******************************************************************************
  * Ctor and friends
  */
 
-  DebugPrinter() : outstream(&std::cout), _prec(5), hcol("36") {
-    #ifndef DEBUGPRINTER_NO_SEGVSTACK
+  DebugPrinter() : outstream(&std::cout), _prec(5) {
+    set_color("31");
+    #ifndef DEBUGPRINTER_NO_SIGNALS
     struct sigaction act;
-    act.sa_handler = sigsegv_handler;
-    sigaction(SIGSEGV, &act, NULL);
-    #endif // DEBUGPRINTER_NO_SEGVSTACK
+    act.sa_handler = signal_handler;
+    for(auto const & sig: sig_names()) {
+        sigaction(sig.first, &act, NULL);
+    }
+    
+    #endif // DEBUGPRINTER_NO_SIGNALS
   }
-
   template <typename T>
   friend DebugPrinter & operator<<(DebugPrinter & d, const T& output);
   friend inline DebugPrinter & operator<<(DebugPrinter & d,
@@ -334,13 +349,15 @@ class DebugPrinter {
 
   static DebugPrinter & static_init() { static DebugPrinter d; return d; }
 
-  static void sigsegv_handler(int signum) {
-    std::cout << "DebugPrinter SIGSEGV handler caught signal " << signum << std::endl;
+  #ifndef DEBUGPRINTER_NO_SIGNALS
+  static void signal_handler(int signum) {
+    std::cout << "DebugPrinter handler caught signal " << sig_names()[signum] << " (" << signum << ")" << std::endl;
     static_init().stack(max_backtrace, false, 3);
     struct sigaction act;
     act.sa_handler = SIG_DFL;
-    sigaction(SIGSEGV, &act, NULL);
+    sigaction(signum, &act, NULL);
   }
+  #endif // DEBUGPRINTER_NO_SIGNALS
 
   #ifndef DEBUGPRINTER_NO_CXXABI
 
