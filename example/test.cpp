@@ -13,6 +13,7 @@
 //~ #define DEBUGPRINTER_NO_SEGVSTACK
 #include "../DebugPrinter.hpp"
 using namespace fsc;
+using fsc::dout;
 
 #include <stdexcept>
 

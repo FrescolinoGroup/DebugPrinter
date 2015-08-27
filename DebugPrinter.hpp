@@ -181,7 +181,7 @@ class DebugPrinter {
  * Ctor and friends
  */
 
-  DebugPrinter() : outstream(&std::cout), _prec(5) {
+  DebugPrinter() : outstream(&std::cout), prec_(5) {
     set_color("31");
     #ifndef DEBUGPRINTER_NO_SIGNALS
     struct sigaction act;
@@ -202,16 +202,16 @@ class DebugPrinter {
  */
 
   inline void operator=(std::ostream & os) { outstream = &os; }
-  inline void set_precision(int prec) { _prec = prec; }
+  inline void set_precision(int prec) { prec_ = prec; }
   inline void set_color(std::string str) {  // no chaining <- returns void
     if(!is_number(str))
       throw std::runtime_error("DebugPrinter error: invalid set_color() argument");
-    hcol = "\033[0;" + str + "m";
-    hcol_r = "\033[0m";
+    hcol_ = "\033[0;" + str + "m";
+    hcol_r_ = "\033[0m";
   }
   inline void set_color() {  // no chaining <- returns void
-    hcol = "";
-    hcol_r = "";
+    hcol_ = "";
+    hcol_r_ = "";
   }
 
 /*******************************************************************************
@@ -340,9 +340,9 @@ class DebugPrinter {
   private:
 
   std::ostream * outstream;
-  int _prec;
-  std::string hcol;
-  std::string hcol_r;
+  int prec_;
+  std::string hcol_;
+  std::string hcol_r_;
 
   static const unsigned int max_backtrace = 50;
   static const unsigned int max_demangled = 4096;
@@ -414,8 +414,8 @@ class DebugPrinter {
   template <bool B, typename U, typename V>
   typename std::enable_if<B, void>::type
     print_stream_impl(const U& label, const V& obj, const std::string& sc) const {
-      *outstream << hcol << label << sc << obj
-                 << hcol_r << std::endl;
+      *outstream << hcol_ << label << sc << obj
+                 << hcol_r_ << std::endl;
   }
 
 
@@ -460,7 +460,7 @@ DebugPrinter & operator<<(DebugPrinter & d, const T& output) {
   size_t savep = (size_t)out.precision();
   std::ios_base::fmtflags savef =
                  out.setf(std::ios_base::fixed, std::ios::floatfield);
-  out << std::setprecision(d._prec) << std::fixed << output
+  out << std::setprecision(d.prec_) << std::fixed << output
             << std::setprecision(savep);
   out.setf(savef, std::ios::floatfield);
   out.flush();
@@ -488,18 +488,22 @@ inline DebugPrinter & operator,(DebugPrinter & d,
 }
 
 /*******************************************************************************
- * Globals
+ * Namespace Globals
  */
 
 // Heap allocate => no destructor call at program exit (wiped by OS).
 /** \brief Static global heap-allocated object.*/
 static DebugPrinter& dout = *new DebugPrinter;
 
-#define dout_HERE dout(__FILE__ ,__LINE__);
-#define dout_FUNC dout.stack(1, true);
+/*******************************************************************************
+ * Macros
+ */
+
+#define dout_HERE fsc::dout(__FILE__ ,__LINE__);
+#define dout_FUNC fsc::dout.stack(1, true);
 
 /**
- * End
+ * End DebugPrinter implementation
  ******************************************************************************/
 
 #else // DEBUGPRINTER_OFF
