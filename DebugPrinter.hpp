@@ -35,7 +35,8 @@
  * frame names and a _c++filt_-ready output.
  * 
  * Pass `DEBUGPRINTER_NO_SIGNALS` to turn off automatic stack tracing when 
- * certain fatal signals occur (`SIGSEGV`, `SIGSYS`, `SIGABRT`, `SIGFPE`).
+ * certain fatal signals occur. Passing this flag is recommended on non-Linux
+ * systems.
  * 
  ******************************************************************************/
 
@@ -103,6 +104,10 @@ namespace fsc {
  *      dout = std::cout              // set output stream
  *      dout.set_precision(13)        // set decimal display precision
  *      dout.set_color("31")          // set terminal highlighting color
+ * 
+ *  In case the program terminates with `SIGSEGV`, `SIGSYS`, `SIGABRT` or
+ *  `SIGFPE`, you will automatically get a stack trace from the raise location.
+ *  To turn this behaviour off, check the Compilation section.
  */
 class DebugPrinter {
 
