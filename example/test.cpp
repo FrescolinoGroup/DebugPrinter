@@ -1,9 +1,7 @@
 /*
- * 
  * Demonstration for DebugPrinter.hpp
  * Compile with -O0 to prevent inlining of functions.
- * Compoile with -rdynamic to get function names.
- * 
+ * Compile with -rdynamic to get function names.
  */
 
 
