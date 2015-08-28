@@ -38,26 +38,31 @@ class Bar : public Foo<double> { public:
 
 };
 
-//~ void f3() { dout_STACK }  // inlined if -O2 or -O3
-void f3() { dout.stack(2, false, 112); }  // inlined if -O2 or -O3
+#include <fstream>
+#include <map>
+
+void f3() { dout_STACK }  // inlined if -O2 or -O3
 void f2() { f3(); }
 void f1() { f2(); }
 
 //~ void segfault_function() { raise(SIGSEGV); }
-void segfault_function() { *(int*)0 = 0; }
+//~ void segfault_function() { *(int*)0 = 0; }
 
-#include <fstream>
+#define dout_FOO(...) __VA_ARGS__
 
 int main() {
+
+    dout_FOO(std::map<int, int>) i;
+    (void)i;
 
     dout = std::cerr;
     dout.set_color("31");
 
-    if(false) {  // for file output switch to true
-        std::ofstream fs("debug.log");
-        dout = fs;
-        dout.set_color();
-    }
+    //~ if(false) {  // for file output switch to true
+        //~ std::ofstream fs("debug.log");
+        //~ dout = fs;
+        //~ dout.set_color();
+    //~ }
 
     Bar<char&> b;
 
@@ -75,7 +80,7 @@ int main() {
 
     int x = 5;
     dout_VAR(x);
-    dout_VAR(b);
+    //~ dout_TYPE(std::vector);
 
     dout_TYPE(42);
     dout_TYPE(unsigned int);
@@ -89,7 +94,7 @@ int main() {
 
     dout_HERE
 
-    segfault_function();
+    //~ segfault_function();
 
     return 0;
 

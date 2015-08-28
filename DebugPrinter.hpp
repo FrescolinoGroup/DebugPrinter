@@ -6,10 +6,10 @@
  * \version    2015.0827
  * \author   
  * Year      | Name
- * --------- | -------------
+ * --------: | :------------
  * 2011-2015 | Donjan Rodic
  *      2015 | Mario Könz
- *    \w     | C. Frescolino
+ *      2015 | C. Frescolino
  * \copyright  Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at\n
@@ -20,7 +20,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * 
- * #### Compilation:
+ * \section dummy &nbsp;
+ * \subsection Compilation Compilation
  * 
  * Link with `-rdynamic` in order to properly get `stack()` frame names and
  * useful `dout_FUNC` output.
@@ -81,10 +82,11 @@ namespace fsc {
 
 /** \brief Class for global static `dout` object
  * 
- *  #### Usage:
+ *  \section dummy &nbsp;
+ *  \subsection Usage Usage
  *  For details, see the documentation for fsc::DebugPrinter member functions
  *  and DebugPrinter.hpp macros.
- * ~~~~~~~~~~~~~{.cpp}
+ *  ~~~{.cpp}
  *      // basic usage:
  * 
  *      dout_HERE                       // print current file and line
@@ -110,22 +112,13 @@ namespace fsc {
  *      dout = std::cout              // set output stream
  *      fsc::dout.set_precision(13)        // set decimal display precision
  *      dout.set_color("31")          // set terminal highlighting color
- * ~~~~~~~~~~~~~
+ *  ~~~
  *  In case the program terminates with `SIGSEGV`, `SIGSYS`, `SIGABRT` or
  *  `SIGFPE`, you will automatically get a stack trace from the raise location.
- *  To turn off this behaviour, check the Compilation section.
+ *  To turn off this behaviour, check the \link Compilation \endlink section.
  */
 class DebugPrinter {
 
-  using sig_type = uint;
-  static std::map<sig_type, std::string> sig_names() {
-    std::map<sig_type, std::string> res;
-    res[SIGABRT] = "SIGABRT";
-    res[SIGFPE] = "SIGFPE";
-    res[SIGSEGV] = "SIGSEGV";
-    res[SIGSYS] = "SIGSYS";
-    return res;
-  }
   public:
 
 /*******************************************************************************
@@ -155,27 +148,29 @@ class DebugPrinter {
   /** \brief Assignment operator for changing streams
    *  \param os  output stream to use
    *  \details Default == `std::cout`. Change to any `std::ostream` with:
-   * 
+   *  ~~~{.cpp}
    *      dout = std::cerr;
+   *  ~~~
    */
   inline void operator=(std::ostream & os) { outstream = &os; }
 
   /** \brief Number of displayed decimal digits
    *  \param prec  desired precision
    *  \details Default == 5. Example usage:
-   * 
+   *  ~~~{.cpp}
    *      dout.set_precision(12);
+   *  ~~~
    */
-  inline void set_precision(int prec) { prec_ = prec; }
+  inline void set_precision(std::streamsize prec) { prec_ = prec; }
 
   /** \brief Highlighting color
    *  \param str  color code
    *  \details
    *  Assumes a `bash` compatible terminal and sets the `operator()` highlighting
    *  color (also used for `dout_HERE`), for example cyan ( == "36" == default):
-   * 
+   *  ~~~{.cpp}
    *      dout.set_color("36");
-   * 
+   *  ~~~
    *  For bash color codes check
    *  http://www.tldp.org/HOWTO/Bash-Prompt-HOWTO/x329.html
    */
@@ -186,9 +181,10 @@ class DebugPrinter {
     hcol_r_ = "\033[0m";
   }
   /** \brief Remove highlighting color
-   * \details No color highlighting (e.g. when writing to a file) Usage example:
-   * 
-   *     dout.set_color();
+   *  \details No color highlighting (e.g. when writing to a file) Usage example:
+   *  ~~~{.cpp}
+   *      dout.set_color();
+   *  ~~~
    */
   inline void set_color() {  // no chaining <- returns void
     hcol_ = "";
@@ -205,9 +201,10 @@ class DebugPrinter {
    *  \param sc     delimiter between label and object
    *  \details If `label` or `obj` don't have the required operator << overloads,
    *  the function will print an error instead. Example usage:
-   * 
+   *  ~~~{.cpp}
    *      dout(label, object);
    *      dout(label, object, "\t");
+   *  ~~~
    */
   template <typename T, typename U>
   inline void operator()(const T& label, const U& obj,
@@ -217,12 +214,13 @@ class DebugPrinter {
   /** \brief Print highlighted object
    *  \param obj    should have a std::ostream & operator<< overload
    *  \details Equivalent to 
-   * 
+   *  ~~~{.cpp}
    *      dout(">>>", obj, " ");
-   * 
+   *  ~~~
    *  Example usage:
-   * 
+   *  ~~~{.cpp}
    *      dout(object);
+   *  ~~~
    */
   template <typename T>
   inline void operator()(const T& obj) const { operator()(">>>", obj, " "); }
@@ -231,22 +229,23 @@ class DebugPrinter {
  * RTTI (stack)
  */
 
-/** \brief Print a stack trace
- *  \param backtrace_size  print at most this many frames
- *  \param compact         only print function names
- *  \param begin           starting offset
- *  \details
- *  Print one line per stack frame, consisting of the binary object name, the
- *  demangled function name, and the offset within the function and within the
- *  binary.
- *  Example usage:
- * 
- *      dout.stack();                // print a full stack trace
- *      dout.stack(count);           // print at most (int)count frames
- *      dout.stack(count, true);     // print in compact format
- *      dout.stack(count, true, 2);  // and slice off the "first" frame
- *      dout_FUNC                    // shortcut for  dout.stack(1, true);
- */
+  /** \brief Print a stack trace
+   *  \param backtrace_size  print at most this many frames
+   *  \param compact         only print function names
+   *  \param begin           starting offset
+   *  \details
+   *  Print one line per stack frame, consisting of the binary object name, the
+   *  demangled function name, and the offset within the function and within the
+   *  binary.
+   *  Example usage:
+   * ~~~{.cpp}
+   *      dout.stack();                // print a full stack trace
+   *      dout.stack(count);           // print at most (int)count frames
+   *      dout.stack(count, true);     // print in compact format
+   *      dout.stack(count, true, 2);  // and slice off the "first" frame
+   *      dout_FUNC                    // shortcut for  dout.stack(1, true);
+   * ~~~
+   */
   #ifndef DEBUGPRINTER_NO_EXECINFO
 
   void stack(
@@ -287,6 +286,7 @@ class DebugPrinter {
           break;
         case -2:  // invalid name under the C++ ABI mangling rules
           demangled = mangled;
+          // fallthrough
         default:
           if(compact == false)
             out << "  " << prog << ":  " << demangled << "  "
@@ -353,20 +353,31 @@ class DebugPrinter {
   private:
 
   std::ostream * outstream;
-  int prec_;
+  std::streamsize prec_;
   std::string hcol_;
   std::string hcol_r_;
 
   static const unsigned int max_backtrace = 50;
   static const unsigned int max_demangled = 4096;
 
-  static DebugPrinter & static_init() { static DebugPrinter d; return d; }
+  //~ static DebugPrinter & static_init() { static DebugPrinter d; return d; }
 
   #ifndef DEBUGPRINTER_NO_SIGNALS
+  using sig_type = int;
+  static std::map<sig_type, std::string> sig_names() {
+    std::map<sig_type, std::string> res;
+    res[SIGABRT] = "SIGABRT";
+    res[SIGFPE] = "SIGFPE";
+    res[SIGSEGV] = "SIGSEGV";
+    res[SIGSYS] = "SIGSYS";
+    return res;
+  }
   static void signal_handler(int signum) {
     std::cout << "DebugPrinter handler caught signal "
               << sig_names()[signum] << " (" << signum << ")" << std::endl;
-    static_init().stack(max_backtrace, false, 3);
+    //~ static_init().stack(max_backtrace, false, 3);
+    static DebugPrinter d;
+    d.stack(max_backtrace, false, 3);
     struct sigaction act;
     act.sa_handler = SIG_DFL;
     sigaction(signum, &act, NULL);
@@ -417,7 +428,6 @@ class DebugPrinter {
     else return str.substr(pos+1, str.find("]", pos) - pos-1);
   }
   bool is_number(const std::string& s) {
-    std::string::const_iterator it = s.begin();
     return !s.empty() && std::find_if(s.begin(), s.end(),
                             [](char c) { return !std::isdigit(c); }) == s.end();
   }
@@ -471,11 +481,10 @@ class DebugPrinter {
   template<typename T, typename S>
   struct has_stream_impl {
       template<typename U>
-      static constexpr auto check(int)
+      static auto check(int)
         -> decltype( std::declval<U>() << std::declval<T>(), std::true_type() );
-
       template<typename>
-      static constexpr auto check(...) -> std::false_type;
+      static auto check(...) -> std::false_type;
       typedef decltype(check<S>(0)) type;
   };
 
@@ -493,11 +502,11 @@ class DebugPrinter {
 template <typename T>
 DebugPrinter & operator<<(DebugPrinter & d, const T& output) {
   std::ostream & out = *d.outstream;
-  size_t savep = (size_t)out.precision();
+  std::streamsize savep = out.precision();
   std::ios_base::fmtflags savef =
                  out.setf(std::ios_base::fixed, std::ios::floatfield);
-  out << std::setprecision(d.prec_) << std::fixed << output
-            << std::setprecision(savep);
+  out << std::setprecision((int)d.prec_) << std::fixed << output
+            << std::setprecision((int)savep);
   out.setf(savef, std::ios::floatfield);
   out.flush();
   return d;
