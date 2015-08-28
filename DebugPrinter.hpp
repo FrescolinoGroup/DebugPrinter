@@ -4,8 +4,12 @@
  * \brief      DebugPrinter header-only lib.
  * >           Creates a static object named `dout` and defines debuging macros.
  * \version    2015.0827
- * \author     Donjan Rodic, Mario Könz, C. Frescolino
- * \date       2011-2015
+ * \author   
+ * Year      | Name
+ * --------- | -------------
+ * 2011-2015 | Donjan Rodic
+ *      2015 | Mario Könz
+ *    \w     | C. Frescolino
  * \copyright  Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at\n
@@ -25,14 +29,16 @@
  * 
  * Pass `DEBUGPRINTER_OFF` to turn off all functionality provided here. You can
  * leave the debug statements in your code, since all methods and macros become
- * inline and trivial, and thus should be optimised away by your compiler.
+ * inline and trivial, and thus will be optimised away by your compiler at
+ * sufficient optimisation flags.
  * 
  * Pass `DEBUGPRINTER_NO_EXECINFO` flag on Windows (disables `stack()`,
  * `dout_STACK` and `dout_FUNC`).
  * 
- * Pass `DEBUGPRINTER_NO_CXXABI` if you don't have a _cxxabi_ demangle call in
- * your libc distribution. The stack and type methods will then print raw stack
- * frame names and a _c++filt_-ready output.
+ * Pass `DEBUGPRINTER_NO_CXXABI` if you don't have a _cxxabi_ demangle call 
+ * (translates raw type symbols i.e. `typeid(std::string).name()` output `Ss` to
+ * `std::string`) in your libc distribution. The stack and type methods will 
+ * then print raw stack frame names and a _c++filt_-ready output.
  * 
  * Pass `DEBUGPRINTER_NO_SIGNALS` to turn off automatic stack tracing when 
  * certain fatal signals occur. Passing this flag is recommended on non-Linux
@@ -78,7 +84,7 @@ namespace fsc {
  *  #### Usage:
  *  For details, see the documentation for fsc::DebugPrinter member functions
  *  and DebugPrinter.hpp macros.
- * 
+ * ~~~~~~~~~~~~~{.cpp}
  *      // basic usage:
  * 
  *      dout_HERE                       // print current file and line
@@ -99,15 +105,15 @@ namespace fsc {
  * 
  *      dout(object);                 // highlights the object
  *      dout(object, label, " at ");  // highlighted object, label and separator
- *      dout_stack(4, false, 2);      // print 4 stack frames, omitting the first
+ *      dout.stack(4, false, 2);      // print 4 stack frames, omitting the first
  * 
  *      dout = std::cout              // set output stream
- *      dout.set_precision(13)        // set decimal display precision
+ *      fsc::dout.set_precision(13)        // set decimal display precision
  *      dout.set_color("31")          // set terminal highlighting color
- * 
+ * ~~~~~~~~~~~~~
  *  In case the program terminates with `SIGSEGV`, `SIGSYS`, `SIGABRT` or
  *  `SIGFPE`, you will automatically get a stack trace from the raise location.
- *  To turn this behaviour off, check the Compilation section.
+ *  To turn off this behaviour, check the Compilation section.
  */
 class DebugPrinter {
 
