@@ -2,7 +2,7 @@
  * 
  * \file       DebugPrinter.hpp
  * \brief      DebugPrinter header-only lib.
- * >           Creates a static object named `dout` and defines debuging macros.
+ * >           Creates a static object named `dout` and defines debugging macros.
  * \version    2015.0827
  * \author   
  * Year      | Name
@@ -37,8 +37,8 @@
  * `dout_STACK` and `dout_FUNC`).
  * 
  * Pass `DEBUGPRINTER_NO_CXXABI` if you don't have a _cxxabi_ demangle call 
- * (translates raw type symbols i.e. `typeid(std::string).name()` output `Ss` to
- * `std::string`) in your libc distribution. The stack and type methods will 
+ * (translates raw type symbols, i.e. `typeid(std::string).name()` output `Ss`
+ * to `std::string`) in your libc distribution. The stack and type methods will
  * then print raw stack frame names and a _c++filt_-ready output.
  * 
  * Pass `DEBUGPRINTER_NO_SIGNALS` to turn off automatic stack tracing when 
@@ -89,13 +89,12 @@ namespace fsc {
  *  ~~~{.cpp}
  *      // basic usage:
  * 
- *      dout_HERE                       // print current file and line
- *      dout_FUNC                       // print current function signature
- *      dout_STACK                      // print stack trace
- *      dout_TYPE(int)                  // type information for given type
- *      dout_TYPE((std::map<int,int>))  //  ... beware commas in macro arguments
- *      dout_TYPE(var)                  // demangled RTTI of given variable
- *      dout_VAR(var)                   // print 'name = value' of given variable
+ *      dout_HERE                      // print current file and line
+ *      dout_FUNC                      // print current function signature
+ *      dout_STACK                     // print stack trace
+ *      dout_TYPE(std::map<int,int>)   // print given type (e.g. in templates)
+ *      dout_TYPE(var)                 // print demangled RTTI of given variable
+ *      dout_VAR(var)                  // print highlighted 'name = value'
  * 
  * 
  *      // advanced usage:
@@ -105,12 +104,12 @@ namespace fsc {
  *      dout << "foo" << std::endl;
  *      dout, var , 5, " bar ", 6 << " foobar " << 7, 8, std::endl;
  * 
- *      dout(object);                 // highlights the object
- *      dout(object, label, " at ");  // highlighted object, label and separator
+ *      dout(object);                 // highlight object
+ *      dout(object, label, " at ");  // highlight label, object and separator
  *      dout.stack(4, false, 2);      // print 4 stack frames, omitting the first
  * 
  *      dout = std::cout              // set output stream
- *      fsc::dout.set_precision(13)        // set decimal display precision
+ *      dout.set_precision(13)   // set decimal display precision
  *      dout.set_color("31")          // set terminal highlighting color
  *  ~~~
  *  In case the program terminates with `SIGSEGV`, `SIGSYS`, `SIGABRT` or
@@ -133,7 +132,6 @@ class DebugPrinter {
     for(auto const & sig: sig_names()) {
         sigaction(sig.first, &act, NULL);
     }
-
     #endif // DEBUGPRINTER_NO_SIGNALS
   }
   template <typename T>
@@ -153,6 +151,34 @@ class DebugPrinter {
    *  ~~~
    */
   inline void operator=(std::ostream & os) { outstream = &os; }
+
+  /** \brief Assignment operator for moving streams
+   *  \param os  output stream to take over
+   *  \details Use to pass ownership if the stream object would leave scope.
+   *  ~~~{.cpp}
+   *      if(file_write == true) {
+   *          std::ofstream fs("debug.log");
+   *          dout = std::move(fs);
+   *          dout.set_color();
+   *      }
+   *      dout << "Writing to debug.log";
+   *  ~~~
+   * Note: trying to move `std::cout` (or other standard static streams)
+   * anywhere is considered a bad life choice.
+   */
+  //~ inline void operator=(std::ostream && os) { outstream = new std::ostream(os); }
+  template <typename T>
+  //~ inline void operator=(std::ostream && os) {
+  inline void operator=(T && os) {
+    //~ if(std::is_move_assignable<decltype(os)>()
+      std::cout << "op= &&" << std::is_move_assignable<decltype(os)>() << std::endl;
+      if(std::is_move_assignable<decltype(os)>()) {
+        
+      } else {
+        //~ std::cer
+      }
+    //~ delete outstream; outstream = &os;
+  } // ToDo
 
   /** \brief Number of displayed decimal digits
    *  \param prec  desired precision
@@ -229,6 +255,7 @@ class DebugPrinter {
  * RTTI (stack)
  */
 
+  #ifndef DEBUGPRINTER_NO_EXECINFO
   /** \brief Print a stack trace
    *  \param backtrace_size  print at most this many frames
    *  \param compact         only print function names
@@ -238,16 +265,14 @@ class DebugPrinter {
    *  demangled function name, and the offset within the function and within the
    *  binary.
    *  Example usage:
-   * ~~~{.cpp}
+   *  ~~~{.cpp}
    *      dout.stack();                // print a full stack trace
    *      dout.stack(count);           // print at most (int)count frames
    *      dout.stack(count, true);     // print in compact format
    *      dout.stack(count, true, 2);  // and slice off the "first" frame
    *      dout_FUNC                    // shortcut for  dout.stack(1, true);
-   * ~~~
+   *  ~~~
    */
-  #ifndef DEBUGPRINTER_NO_EXECINFO
-
   void stack(
       const int backtrace_size = max_backtrace,
       const bool compact = false,
@@ -333,11 +358,6 @@ class DebugPrinter {
   /// \cond DEBUGPRINTER_DONOTDOCME_HAVESOMEDECENCY_PLEASE
   struct detail {
 
-    template <typename T>
-    inline static void var(const DebugPrinter &dout, std::string name, T & val) {
-      dout.var_impl<has_stream<T>::value>(name, val);
-    }
-
     inline static void type_name(const DebugPrinter &dout, const std::string & name) {
       int dummy;
       *(dout.outstream) << dout.demangle(name, dummy) << std::endl;
@@ -352,15 +372,13 @@ class DebugPrinter {
 
   private:
 
-  std::ostream * outstream;
-  std::streamsize prec_;
-  std::string hcol_;
-  std::string hcol_r_;
+  std::ostream * outstream;             // output stream
+  std::streamsize prec_;                // precision
+  std::string hcol_;                    // highlighting color
+  std::string hcol_r_;                  // neutral color
 
   static const unsigned int max_backtrace = 50;
   static const unsigned int max_demangled = 4096;
-
-  //~ static DebugPrinter & static_init() { static DebugPrinter d; return d; }
 
   #ifndef DEBUGPRINTER_NO_SIGNALS
   using sig_type = int;
@@ -372,11 +390,12 @@ class DebugPrinter {
     res[SIGSYS] = "SIGSYS";
     return res;
   }
+  static DebugPrinter & static_init() { static DebugPrinter d; return d; }
   static void signal_handler(int signum) {
-    std::cout << "DebugPrinter handler caught signal "
-              << sig_names()[signum] << " (" << signum << ")" << std::endl;
-    //~ static_init().stack(max_backtrace, false, 3);
     static DebugPrinter d;
+    d << "DebugPrinter handler caught signal "
+      << sig_names()[signum] << " (" << signum << ")" << std::endl;
+    //~ static_init().stack(max_backtrace, false, 3);
     d.stack(max_backtrace, false, 3);
     struct sigaction act;
     act.sa_handler = SIG_DFL;
@@ -408,7 +427,7 @@ class DebugPrinter {
     detail::type_name(*this, std::string(typeid(obj).name()));
   }
 
-
+  // Fetch different parts from a stack trace line
   inline std::string prog_part(const std::string str) const {
     return str.substr(0, str.find("("));
   }
@@ -427,26 +446,14 @@ class DebugPrinter {
     if(pos == std::string::npos) return "";
     else return str.substr(pos+1, str.find("]", pos) - pos-1);
   }
+
+  // Used for set_color validation
   bool is_number(const std::string& s) {
     return !s.empty() && std::find_if(s.begin(), s.end(),
                             [](char c) { return !std::isdigit(c); }) == s.end();
   }
 
-  template <bool B, typename T>
-  typename std::enable_if<!B, void>::type
-    var_impl(std::string & name, T & val) const {
-      int dummy;
-      std::string stream = typeid(*outstream).name();
-      *outstream << "DebugPrinter error: object named '" << name << "' of type "; type(val);
-      *outstream << "                    has no suitable "
-                 << demangle(stream, dummy) << " operator<< overload." << std::endl;
-  }
-  template <bool B, typename T>
-  typename std::enable_if<B, void>::type
-    var_impl(std::string & name, T & val) const {
-      *outstream << name << " = " << val << std::endl;
-  }
-
+  // Implementation of operator()
   template <bool B, typename U, typename V>
   typename std::enable_if<!B, void>::type
     print_stream_impl(const U& label, const V& obj, const std::string&) const {
@@ -537,39 +544,52 @@ inline DebugPrinter & operator,(DebugPrinter & d,
  */
 
 // Heap allocate => no destructor call at program exit (wiped by OS).
+//               => no management of std::ostream& even possible
+//                  (stop BLC design like shared_ptr on DebugPrinter::outstream)
 /** \brief Static global heap-allocated object.*/
 static DebugPrinter& dout = *new DebugPrinter;
 
-/*******************************************************************************
- * Macros
- */
+/** Macros ********************************************************************/
 
 /** \brief Print current line
  *  \details Shortcut for
- * 
+ *  ~~~{.cpp}
  *      fsc::dout(__FILE__ ,__LINE__);
+ *  ~~~
  */
 #define dout_HERE fsc::dout(__FILE__ ,__LINE__);
 
 /** \brief Print current function signature
  *  \details Shortcut for
- * 
+ *  ~~~{.cpp}
  *      fsc::dout.stack(1, true);
+ *  ~~~
  */
 #define dout_FUNC fsc::dout.stack(1, true);
 
-/** \brief Print 'name = value' of given variable
+/** \brief Print highlighted 'name = value' of given variable
+ *  \param x  The variable
+ *  \details Shortcut for preprocessed equivalent of
+ *  ~~~{.cpp}
+ *      fsc::dout(#var, var, " = ");
+ *  ~~~
  */
-#define dout_VAR(x) fsc::DebugPrinter::detail::var(fsc::dout, #x, x);
+#define dout_VAR(x) fsc::dout(#x, x, " = ");
 
 /** \brief Print demangled type information of given variable or type.
- *  \details Note that you have to put parentheses around types declarations 
- *  with a comma in order to properly pass them:
- * 
- *      dout_TYPE( (std::map<int,int>) )*/
-#define dout_TYPE(x) fsc::DebugPrinter::detail::type_name(fsc::dout, typeid(x).name());
+ *  \details Example usage:
+ *  ~~~{.cpp}
+ *      dout_TYPE(std::map<int,int>)
+ *      dout_TYPE(var)
+ *  ~~~
+ */
+#define dout_TYPE(...) fsc::DebugPrinter::detail::type_name(fsc::dout, typeid( __VA_ARGS__ ).name());
 
-/** \brief Shortcut for fsc::dout.stack();
+/** \brief Print a stack trace.
+ *  \details Shortcut for
+ *  ~~~{.cpp}
+ *     fsc::dout.stack();
+ *  ~~~
  */
 #define dout_STACK fsc::dout.stack();
 
@@ -583,15 +603,11 @@ class DebugPrinter {
   public:
 
   inline void operator=(std::ostream &) {}
+  inline void operator=(std::ostream &&) {}
   inline void set_precision(int) {}
   inline void set_color(std::string) {}
 
-  template <typename T>
-  inline void operator()(const T&) const {}
-  template <typename T, typename U>
-  inline void operator()(const T&, const U&) const {}
-  template <typename T, typename U>
-  inline void operator()(const T&, const U&, const std::string) const {}
+  inline void operator()(...) const {}
 
   template <typename T>
   inline void type(T) const {}

@@ -47,23 +47,39 @@ void f1() { f2(); }
 
 //~ void segfault_function() { raise(SIGSEGV); }
 //~ void segfault_function() { *(int*)0 = 0; }
+void segfault_function() { }
 
-#define dout_FOO(...) __VA_ARGS__
+struct asdf {
+    void operator()(int a, int b) {
+        std::cout << a << " " << b << std::endl;
+    }
+};
 
 int main() {
 
-    dout_FOO(std::map<int, int>) i;
-    (void)i;
 
     dout = std::cerr;
     dout.set_color("31");
 
-    //~ if(false) {  // for file output switch to true
-        //~ std::ofstream fs("debug.log");
+    // ToDo: find better use case for dout_VAR
+    //~ asdf e;
+    //~ e(2,2);
+    //~ dout_VAR(e);
+
+
+    // ToDo: shared_ptr of ofstream
+        std::ofstream fs("debug.log");
+    dout = std::move(fs);
+    dout = std::move(std::cout);
+
+    dout << std::is_move_assignable<decltype(std::cout)>() << std::endl;
+    dout << std::is_move_assignable<decltype(fs)>() << std::endl;
+    dout << std::is_trivially_move_assignable<decltype(fs)>() << std::endl;
+    if(false) {  // for file output switch to true
+        //~ dout = std::move(fs);
         //~ dout = fs;
         //~ dout.set_color();
-    //~ }
-
+    }
     Bar<char&> b;
 
     dout_HERE
@@ -80,13 +96,13 @@ int main() {
 
     int x = 5;
     dout_VAR(x);
-    //~ dout_TYPE(std::vector);
-
-    dout_TYPE(42);
-    dout_TYPE(unsigned int);
-    dout_TYPE(b);
-    dout_TYPE((&Bar<double>::foo<int, std::string, 84>));
-    dout_TYPE(f1);
+    dout_VAR(b);
+//~ 
+    //~ dout_TYPE(42);
+    //~ dout_TYPE(std::map<int, int>);
+    //~ dout_TYPE(b);
+    //~ dout_TYPE((&Bar<double>::foo<int, std::string, 84>));
+    //~ dout_TYPE(f1);
 
     dout_HERE
 
@@ -94,7 +110,7 @@ int main() {
 
     dout_HERE
 
-    //~ segfault_function();
+    segfault_function();
 
     return 0;
 
