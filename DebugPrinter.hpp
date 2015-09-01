@@ -109,7 +109,7 @@ namespace fsc {
  *      dout.stack(4, false, 2);      // print 4 stack frames, omitting the first
  * 
  *      dout = std::cout              // set output stream
- *      dout.set_precision(13)   // set decimal display precision
+ *      dout.set_precision(13)        // set decimal display precision
  *      dout.set_color("31")          // set terminal highlighting color
  *  ~~~
  *  In case the program terminates with `SIGSEGV`, `SIGSYS`, `SIGABRT` or
