@@ -193,7 +193,8 @@ class DebugPrinter {
    *  \param str  color code
    *  \details
    *  Assumes a `bash` compatible terminal and sets the `operator()` highlighting
-   *  color (also used for `dout_HERE`), for example cyan ( == "36" == default):
+   *  color (also used for `dout_HERE` and `dout_VAR`), for example cyan ( ==
+   *  "36" == default):
    *  ~~~{.cpp}
    *      dout.set_color("36");
    *  ~~~
