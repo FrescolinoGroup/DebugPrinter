@@ -155,6 +155,8 @@ class DebugPrinter {
    *  ~~~{.cpp}
    *      dout = std::cerr;
    *  ~~~
+   * The DebugPrinter assumes that the object is managed elsewhere (to have it
+   * take ownership, check the assigment operator for moving streams).
    */
   inline void operator=(std::ostream & os) { outstream = &os; }
 
