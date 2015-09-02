@@ -47,6 +47,9 @@
  * 
  ******************************************************************************/
 
+
+// ToDo: dout_TYPE checks for ref status: dout_TYPE(int&) vs dout_type(int&&)
+// ToDo: sprinkle noexcept
 #ifndef DEBUGPRINTER_HEADER
 #define DEBUGPRINTER_HEADER
 
@@ -55,11 +58,13 @@
 #ifndef DEBUGPRINTER_OFF
 
 #include <iomanip>
+#include <fstream>
 #include <typeinfo>
 #include <cstdlib>
 #include <signal.h>
 #include <algorithm>
 #include <stdexcept>
+#include <memory>
 
 #ifndef DEBUGPRINTER_NO_EXECINFO
 #include <execinfo.h>
@@ -104,13 +109,13 @@ namespace fsc {
  *      dout << "foo" << std::endl;
  *      dout, var , 5, " bar ", 6 << " foobar " << 7, 8, std::endl;
  * 
- *      dout(object);                 // highlight object
- *      dout(object, label, " at ");  // highlight label, object and separator
- *      dout.stack(4, false, 2);      // print 4 stack frames, omitting the first
+ *      dout(object);                  // highlight object
+ *      dout(object, label, " at ");   // highlight label, object and separator
+ *      dout.stack(4, false, 2);       // print 4 stack frames, omitting the first
  * 
- *      dout = std::cout              // set output stream
- *      dout.set_precision(13)        // set decimal display precision
- *      dout.set_color("31")          // set terminal highlighting color
+ *      dout = std::cout               // set output stream
+ *      dout.set_precision(13)         // set decimal display precision
+ *      dout.set_color("31")           // set terminal highlighting color
  *  ~~~
  *  In case the program terminates with `SIGSEGV`, `SIGSYS`, `SIGABRT` or
  *  `SIGFPE`, you will automatically get a stack trace from the raise location.
@@ -163,22 +168,28 @@ class DebugPrinter {
    *      }
    *      dout << "Writing to debug.log";
    *  ~~~
-   * Note: trying to move `std::cout` (or other standard static streams)
-   * anywhere is considered a bad life choice.
+   *  Note: trying to move `std::cout` (or other static standard streams)
+   *  is considered a bad life choice.
    */
-  //~ inline void operator=(std::ostream && os) { outstream = new std::ostream(os); }
   template <typename T>
-  //~ inline void operator=(std::ostream && os) {
-  inline void operator=(T && os) {
-    //~ if(std::is_move_assignable<decltype(os)>()
-      std::cout << "op= &&" << std::is_move_assignable<decltype(os)>() << std::endl;
-      if(std::is_move_assignable<decltype(os)>()) {
-        
-      } else {
-        //~ std::cer
-      }
-    //~ delete outstream; outstream = &os;
-  } // ToDo
+  inline auto operator=(T && os)
+    ->  typename std::enable_if<!std::is_move_assignable<T>::value
+                             && std::is_rvalue_reference<decltype(os)>::value, void>::type {
+      std::cerr << "\033[0;36m" << ">>> " << __func__ << ": " << __LINE__ << "\033[0m" << std::endl;
+    int dummy;
+    std::string name = demangle(typeid(T).name(), dummy);
+    // ToDo: throw bad life choice exception
+    throw std::runtime_error("DebugPrinter error: object of type " + name + " is not move-assignable.");
+  }
+  template <typename T>
+  inline auto operator=(T && os)
+    ->  typename std::enable_if<std::is_move_assignable<T>::value
+                             && std::is_rvalue_reference<decltype(os)>::value, void>::type {
+      std::cerr << "\033[0;36m" << ">>> " << __func__ << ": " << __LINE__ << "\033[0m" << std::endl;
+    outstream_ptr = std::shared_ptr<std::ostream>(new T(std::move(os)));
+    outstream = outstream_ptr.get();
+  }
+std::ostream * get_outstream_p() {return outstream;}
 
   /** \brief Number of displayed decimal digits
    *  \param prec  desired precision
@@ -373,10 +384,11 @@ class DebugPrinter {
 
   private:
 
-  std::ostream * outstream;             // output stream
-  std::streamsize prec_;                // precision
-  std::string hcol_;                    // highlighting color
-  std::string hcol_r_;                  // neutral color
+  std::ostream * outstream;                      // output stream
+  std::shared_ptr<std::ostream> outstream_ptr;   // output stream
+  std::streamsize prec_;                         // precision
+  std::string hcol_;                             // highlighting color
+  std::string hcol_r_;                           // neutral color
 
   static const unsigned int max_backtrace = 50;
   static const unsigned int max_demangled = 4096;
@@ -473,7 +485,7 @@ class DebugPrinter {
   }
 
 
-  // TODO: move to external detail
+  // ToDo: move to external component
   template <bool B, typename... T>
   struct m_and_impl {
     typedef std::integral_constant<bool , B> type;
@@ -545,7 +557,7 @@ inline DebugPrinter & operator,(DebugPrinter & d,
  */
 
 // Heap allocate => no destructor call at program exit (wiped by OS).
-//               => no management of std::ostream& even possible
+//               => no management of std::ostream& possible
 //                  (stop BLC design like shared_ptr on DebugPrinter::outstream)
 /** \brief Static global heap-allocated object.*/
 static DebugPrinter& dout = *new DebugPrinter;
@@ -606,7 +618,7 @@ class DebugPrinter {
   inline void operator=(std::ostream &) {}
   inline void operator=(std::ostream &&) {}
   inline void set_precision(int) {}
-  inline void set_color(std::string) {}
+  inline void set_color(...) {}
 
   inline void operator()(...) const {}
 
@@ -628,8 +640,8 @@ static DebugPrinter dout;
 
 #define dout_HERE ;
 #define dout_FUNC ;
-#define dout_VAR ;
-#define dout_TYPE ;
+#define dout_VAR(...) ;
+#define dout_TYPE(...) ;
 #define dout_STACK ;
 
 
