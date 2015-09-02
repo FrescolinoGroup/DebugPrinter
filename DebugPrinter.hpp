@@ -160,19 +160,6 @@ class DebugPrinter {
 
   /** \brief Assignment operator for moving streams
    *  \param os  output stream to take over
-   *  \details This is the
-   */
-  template <typename T>
-  inline auto operator=(T && os)
-    ->  typename std::enable_if<!std::is_move_assignable<T>::value
-                             && std::is_rvalue_reference<decltype(os)>::value, void>::type {
-    int dummy;
-    std::string name = demangle(typeid(T).name(), dummy);
-    // ToDo: throw bad life choice exception
-    throw std::runtime_error("DebugPrinter error: object of type " + name + " is not move-assignable.");
-  }
-  /** \brief Assignment operator for moving streams
-   *  \param os  output stream to take over
    *  \details Use to pass ownership if the stream object would leave scope.
    *  ~~~{.cpp}
    *      if(file_write == true) {
