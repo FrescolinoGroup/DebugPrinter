@@ -7,7 +7,7 @@
 
 //~ #define DEBUGPRINTER_OFF
 //~ #define DEBUGPRINTER_NO_EXECINFO
-//~ #define DEBUGPRINTER_NO_CXXABI
+#define DEBUGPRINTER_NO_CXXABI
 //~ #define DEBUGPRINTER_NO_SIGNALS
 #include "../DebugPrinter.hpp"
 using fsc::dout;

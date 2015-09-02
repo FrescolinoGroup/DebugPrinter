@@ -159,6 +159,20 @@ class DebugPrinter {
 
   /** \brief Assignment operator for moving streams
    *  \param os  output stream to take over
+   *  \details This is the
+   */
+  template <typename T>
+  inline auto operator=(T && os)
+    ->  typename std::enable_if<!std::is_move_assignable<T>::value
+                             && std::is_rvalue_reference<decltype(os)>::value, void>::type {
+      std::cerr << "\033[0;36m" << ">>> " << __func__ << ": " << __LINE__ << "\033[0m" << std::endl;
+    int dummy;
+    std::string name = demangle(typeid(T).name(), dummy);
+    // ToDo: throw bad life choice exception
+    throw std::runtime_error("DebugPrinter error: object of type " + name + " is not move-assignable.");
+  }
+  /** \brief Assignment operator for moving streams
+   *  \param os  output stream to take over
    *  \details Use to pass ownership if the stream object would leave scope.
    *  ~~~{.cpp}
    *      if(file_write == true) {
@@ -173,23 +187,12 @@ class DebugPrinter {
    */
   template <typename T>
   inline auto operator=(T && os)
-    ->  typename std::enable_if<!std::is_move_assignable<T>::value
-                             && std::is_rvalue_reference<decltype(os)>::value, void>::type {
-      std::cerr << "\033[0;36m" << ">>> " << __func__ << ": " << __LINE__ << "\033[0m" << std::endl;
-    int dummy;
-    std::string name = demangle(typeid(T).name(), dummy);
-    // ToDo: throw bad life choice exception
-    throw std::runtime_error("DebugPrinter error: object of type " + name + " is not move-assignable.");
-  }
-  template <typename T>
-  inline auto operator=(T && os)
     ->  typename std::enable_if<std::is_move_assignable<T>::value
                              && std::is_rvalue_reference<decltype(os)>::value, void>::type {
       std::cerr << "\033[0;36m" << ">>> " << __func__ << ": " << __LINE__ << "\033[0m" << std::endl;
     outstream_ptr = std::shared_ptr<std::ostream>(new T(std::move(os)));
     outstream = outstream_ptr.get();
   }
-std::ostream * get_outstream_p() {return outstream;}
 
   /** \brief Number of displayed decimal digits
    *  \param prec  desired precision
@@ -441,6 +444,32 @@ std::ostream * get_outstream_p() {return outstream;}
   }
 
   // Fetch different parts from a stack trace line
+#ifdef __APPLE__
+  inline std::string prog_part(const std::string str) const {
+    istringstream ss(str);
+    std::string res;
+    ss >> res; ss >> res;
+    return res;
+  }
+  inline std::string mangled_part(const std::string str) const {
+    istringstream ss(str);
+    std::string res;
+    ss >> res; ss >> res; ss >> res; ss >> res;
+    return res;
+  }
+  inline std::string offset_part(const std::string str) const {
+    istringstream ss(str);
+    std::string res;
+    ss >> res; ss >> res; ss >> res; ss >> res; ss >> res;
+    return res;
+  }
+  inline std::string address_part(const std::string str) const {
+    istringstream ss(str);
+    std::string res;
+    ss >> res; ss >> res; ss >> res;
+    return res;
+  }
+#else
   inline std::string prog_part(const std::string str) const {
     return str.substr(0, str.find("("));
   }
@@ -459,6 +488,7 @@ std::ostream * get_outstream_p() {return outstream;}
     if(pos == std::string::npos) return "";
     else return str.substr(pos+1, str.find("]", pos) - pos-1);
   }
+#endif
 
   // Used for set_color validation
   bool is_number(const std::string& s) {
