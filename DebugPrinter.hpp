@@ -166,7 +166,6 @@ class DebugPrinter {
   inline auto operator=(T && os)
     ->  typename std::enable_if<!std::is_move_assignable<T>::value
                              && std::is_rvalue_reference<decltype(os)>::value, void>::type {
-      std::cerr << "\033[0;36m" << ">>> " << __func__ << ": " << __LINE__ << "\033[0m" << std::endl;
     int dummy;
     std::string name = demangle(typeid(T).name(), dummy);
     // ToDo: throw bad life choice exception
@@ -190,9 +189,8 @@ class DebugPrinter {
   inline auto operator=(T && os)
     ->  typename std::enable_if<std::is_move_assignable<T>::value
                              && std::is_rvalue_reference<decltype(os)>::value, void>::type {
-      std::cerr << "\033[0;36m" << ">>> " << __func__ << ": " << __LINE__ << "\033[0m" << std::endl;
-    outstream_ptr = std::shared_ptr<std::ostream>(new T(std::move(os)));
-    outstream = outstream_ptr.get();
+    outstream_mm = std::shared_ptr<std::ostream>(new T(std::move(os)));
+    outstream = outstream_mm.get();
   }
 
   /** \brief Number of displayed decimal digits
@@ -389,7 +387,7 @@ class DebugPrinter {
   private:
 
   std::ostream * outstream;                      // output stream
-  std::shared_ptr<std::ostream> outstream_ptr;   // output stream
+  std::shared_ptr<std::ostream> outstream_mm;    // output stream
   std::streamsize prec_;                         // precision
   std::string hcol_;                             // highlighting color
   std::string hcol_r_;                           // neutral color

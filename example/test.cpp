@@ -54,7 +54,7 @@ int main() {
     dout = std::cerr;
     dout.set_color("31");
 
-    if(false) {  // pick one: true false
+    if(true) {  // pick one: true false
         std::ofstream fs("debug.log");
         dout = std::move(fs);
         dout.set_color();
