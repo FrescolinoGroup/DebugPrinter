@@ -59,6 +59,7 @@
 
 #include <iomanip>
 #include <fstream>
+#include <sstream>
 #include <typeinfo>
 #include <cstdlib>
 #include <signal.h>
@@ -329,7 +330,7 @@ class DebugPrinter {
           // fallthrough
         default:
           if(compact == false)
-            out << "  " << prog << ":  " << demangled << "  "
+            out << "  " << prog << ":  " << demangled << "  +"
                 << offset << "  [+" << mainoffset << "]"<< std::endl;
           else
             out << demangled << std::endl;
@@ -446,25 +447,25 @@ class DebugPrinter {
   // Fetch different parts from a stack trace line
 #ifdef __APPLE__
   inline std::string prog_part(const std::string str) const {
-    istringstream ss(str);
+    std::stringstream ss(str);
     std::string res;
     ss >> res; ss >> res;
     return res;
   }
   inline std::string mangled_part(const std::string str) const {
-    istringstream ss(str);
+    std::stringstream ss(str);
     std::string res;
     ss >> res; ss >> res; ss >> res; ss >> res;
     return res;
   }
   inline std::string offset_part(const std::string str) const {
-    istringstream ss(str);
+    std::stringstream ss(str);
     std::string res;
     ss >> res; ss >> res; ss >> res; ss >> res; ss >> res;
     return res;
   }
   inline std::string address_part(const std::string str) const {
-    istringstream ss(str);
+    std::stringstream ss(str);
     std::string res;
     ss >> res; ss >> res; ss >> res;
     return res;
@@ -481,7 +482,7 @@ class DebugPrinter {
   inline std::string offset_part(const std::string str) const {
     std::string::size_type pos = str.find("+");
     if(pos == std::string::npos) return "";
-    else return str.substr(pos, str.find(")", pos) - pos);
+    else return str.substr(pos+1, str.find(")", pos) - pos-1);
   }
   inline std::string address_part(const std::string str) const {
     std::string::size_type pos = str.find("[");
@@ -554,9 +555,9 @@ DebugPrinter & operator<<(DebugPrinter & d, const T& output) {
   std::ostream & out = *d.outstream;
   std::streamsize savep = out.precision();
   std::ios_base::fmtflags savef =
-                 out.setf(std::ios_base::fixed, std::ios::floatfield);
+      out.setf(std::ios_base::fixed, std::ios::floatfield);
   out << std::setprecision((int)d.prec_) << std::fixed << output
-            << std::setprecision((int)savep);
+      << std::setprecision((int)savep);
   out.setf(savef, std::ios::floatfield);
   out.flush();
   return d;
