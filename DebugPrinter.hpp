@@ -3,10 +3,10 @@
  * \file       DebugPrinter.hpp
  * \brief      DebugPrinter header-only lib.
  * >           Creates a static object named `dout` and defines debugging macros.
- * \version    2015.0827
- * \author   
+ * \version    2015.0903
+ * \author
  * Year      | Name
- * --------: | :------------
+ * :-------: | -------------
  * 2011-2015 | Donjan Rodic
  *      2015 | Mario Könz
  *      2015 | C. Frescolino
@@ -28,13 +28,13 @@
  * 
  * _Note: compiler optimisations may inline functions (shorter stack)._
  * 
- * Pass `DEBUGPRINTER_OFF` to turn off all functionality provided here. You can
- * leave the debug statements in your code, since all methods and macros become
- * inline and trivial, and thus will be optimised away by your compiler at
- * sufficient optimisation flags.
+ * Pass `DEBUGPRINTER_OFF` to turn off all functionality provided here. The 
+ * debug statements can be left in the code, since all methods and macros 
+ * become inline and trivial, and thus will be optimised away by the 
+ * compiler at sufficient optimisation flags.
  * 
- * Pass `DEBUGPRINTER_NO_EXECINFO` flag on Windows (disables `stack()`,
- * `dout_STACK` and `dout_FUNC`).
+ * Pass `DEBUGPRINTER_NO_EXECINFO` flag on Windows (makes `stack()`,
+ * `dout_STACK` and `dout_FUNC` trivial).
  * 
  * Pass `DEBUGPRINTER_NO_CXXABI` if you don't have a _cxxabi_ demangle call 
  * (translates raw type symbols, i.e. `typeid(std::string).name()` output `Ss`
@@ -42,14 +42,15 @@
  * then print raw stack frame names and a _c++filt_-ready output.
  * 
  * Pass `DEBUGPRINTER_NO_SIGNALS` to turn off automatic stack tracing when 
- * certain fatal signals occur. Passing this flag is recommended on non-Linux
- * systems.
+ * certain fatal signals occur. Passing this flag is recommended on
+ * non-Unix-like systems.
  * 
  ******************************************************************************/
 
 
 // ToDo: dout_TYPE checks for ref status: dout_TYPE(int&) vs dout_type(int&&)
 // ToDo: sprinkle noexcept
+// ToDo: in Makefile
 #ifndef DEBUGPRINTER_HEADER
 #define DEBUGPRINTER_HEADER
 
@@ -93,13 +94,16 @@ namespace fsc {
  *  For details, see the documentation for fsc::DebugPrinter member functions
  *  and DebugPrinter.hpp macros.
  *  ~~~{.cpp}
+ *      #include <DebugPrinter.hpp>
+ *      // ...
+ * 
  *      // basic usage:
  * 
  *      dout_HERE                      // print current file and line
  *      dout_FUNC                      // print current function signature
  *      dout_STACK                     // print stack trace
- *      dout_TYPE(std::map<int,int>)   // print given type (e.g. in templates)
- *      dout_TYPE(var)                 // print demangled RTTI of given variable
+ *      dout_TYPE(std::map<T,U>)       // print given type (no qualifiers)
+ *      dout_TYPE(var)                 // print RTTI of variable (no qualifiers)
  *      dout_VAR(var)                  // print highlighted 'name = value'
  * 
  * 
@@ -116,7 +120,7 @@ namespace fsc {
  * 
  *      dout = std::cout               // set output stream
  *      dout.set_precision(13)         // set decimal display precision
- *      dout.set_color("31")           // set terminal highlighting color
+ *      dout.set_color("1;34")         // set terminal highlighting color
  *  ~~~
  *  In case the program terminates with `SIGSEGV`, `SIGSYS`, `SIGABRT` or
  *  `SIGFPE`, you will automatically get a stack trace from the raise location.
@@ -129,9 +133,14 @@ class DebugPrinter {
 /*******************************************************************************
  * Ctor and friends
  */
+ 
+  /** \brief Constructor for dout and user specified DebugPrinter objects. */
+  DebugPrinter() {
 
-  DebugPrinter() : outstream(&std::cout), prec_(5) {
-    set_color("31");
+    operator=(std::cout);
+    set_precision(5);
+    set_color("0;31");
+
     #ifndef DEBUGPRINTER_NO_SIGNALS
     struct sigaction act;
     act.sa_handler = signal_handler;
@@ -139,9 +148,18 @@ class DebugPrinter {
         sigaction(sig.first, &act, NULL);
     }
     #endif // DEBUGPRINTER_NO_SIGNALS
+
   }
+
+  /** \brief Deleted copy constructor */
+  DebugPrinter(const DebugPrinter &) = delete;
+
+  /** \brief Deleted move constructor */
+  DebugPrinter(DebugPrinter &&) = delete;
+
   template <typename T>
-  friend DebugPrinter & operator<<(DebugPrinter &, const T&);
+  friend inline DebugPrinter & operator<<(DebugPrinter &, const T&);
+
   friend inline DebugPrinter & operator<<(DebugPrinter &,
                                           std::ostream& (*pf)(std::ostream&));
 
@@ -155,8 +173,8 @@ class DebugPrinter {
    *  ~~~{.cpp}
    *      dout = std::cerr;
    *  ~~~
-   * The DebugPrinter assumes that the object is managed elsewhere (to have it
-   * take ownership, check the assigment operator for moving streams).
+   *  The DebugPrinter assumes that the object is managed elsewhere (to have it
+   *  take ownership, check the assigment operator for moving streams).
    */
   inline void operator=(std::ostream & os) { outstream = &os; }
 
@@ -169,7 +187,7 @@ class DebugPrinter {
    *          dout = std::move(fs);
    *          dout.set_color();
    *      }
-   *      dout << "Writing to debug.log";
+   *      dout << "This shows up in debug.log";
    *  ~~~
    *  Note: trying to move `std::cout` (or other static standard streams)
    *  is considered a bad life choice.
@@ -194,23 +212,25 @@ class DebugPrinter {
   /** \brief Highlighting color
    *  \param str  color code
    *  \details
-   *  Assumes a `bash` compatible terminal and sets the `operator()` highlighting
-   *  color (also used for `dout_HERE` and `dout_VAR`), for example cyan ( ==
-   *  "36" == default):
+   *  Assumes a `bash` compatible terminal and sets the `operator()`
+   *  highlighting color (also used for `dout_HERE` and `dout_VAR`), for example
+   *  red == "0;31" (default). Usage example:
    *  ~~~{.cpp}
-   *      dout.set_color("36");
+   *      dout.set_color("1;34");
    *  ~~~
    *  For bash color codes check
    *  http://www.tldp.org/HOWTO/Bash-Prompt-HOWTO/x329.html
    */
   inline void set_color(std::string str) {  // no chaining <- returns void
-    if(!is_number(str))
+    if(is_number(str.substr(0,1)) && is_number(str.substr(2,2))) {
+      hcol_ = "\033[" + str + "m";
+      hcol_r_ = "\033[0m";
+    } else
       throw std::runtime_error("DebugPrinter error: invalid set_color() argument");
-    hcol_ = "\033[0;" + str + "m";
-    hcol_r_ = "\033[0m";
   }
   /** \brief Remove highlighting color
-   *  \details No color highlighting (e.g. when writing to a file) Usage example:
+   *  \details No color highlighting (e.g. when writing to a file). Usage
+   *  example:
    *  ~~~{.cpp}
    *      dout.set_color();
    *  ~~~
@@ -255,8 +275,30 @@ class DebugPrinter {
   inline void operator()(const T& obj) const { operator()(">>>", obj, " "); }
 
 /*******************************************************************************
- * RTTI (stack)
+ * Info on type and RTTI (stack)
  */
+
+  //~ template <typename T>
+  //~ inline void type(T obj) const {
+    //~ std::string traits = "";
+//~ 
+    //~ std::cout << std::is_const<decltype(obj)>() << std::endl;
+    //~ std::cout << std::is_reference<decltype(obj)>() << std::endl;
+    //~ std::cout << std::is_lvalue_reference<decltype(obj)>() << std::endl;
+    //~ std::cout << std::is_rvalue_reference<decltype(obj)>() << std::endl; 
+    //~ std::cout << std::is_const<T>() << std::endl;
+    //~ std::cout << std::is_reference<T>() << std::endl;
+    //~ std::cout << std::is_lvalue_reference<T>() << std::endl;
+    //~ std::cout << std::is_rvalue_reference<T>() << std::endl; 
+//~ 
+// T(obj) ...
+    //~ if(std::is_const<T>()) traits += "const ";
+    //~ detail::type_name(*this, std::string(typeid(obj).name()), traits);
+  //~ }
+  template <typename T>
+  inline auto type(const T obj) const -> void {  // enable if
+    std::cout << "asdsf" << obj << std::endl;
+  }
 
   #ifndef DEBUGPRINTER_NO_EXECINFO
   /** \brief Print a stack trace
@@ -317,8 +359,8 @@ class DebugPrinter {
           // fallthrough
         default:
           if(compact == false)
-            out << "  " << prog << ":  " << demangled << "  +"
-                << offset << "  [+" << mainoffset << "]"<< std::endl;
+            out << "  " << prog << ":  " << demangled << "\t+"
+                << offset << "\t[+" << mainoffset << "]"<< std::endl;
           else
             out << demangled << std::endl;
       }
@@ -361,9 +403,11 @@ class DebugPrinter {
   /// \cond DEBUGPRINTER_DONOTDOCME_HAVESOMEDECENCY_PLEASE
   struct detail {
 
-    inline static void type_name(const DebugPrinter &dout, const std::string & name) {
+    inline static void type_name(const DebugPrinter &dout,
+                                 const std::string & name,
+                                 const std::string & traits = "") {
       int dummy;
-      *(dout.outstream) << dout.demangle(name, dummy) << std::endl;
+      *(dout.outstream) << traits << dout.demangle(name, dummy) << std::endl;
     }
 
   };
@@ -376,7 +420,7 @@ class DebugPrinter {
   private:
 
   std::ostream * outstream;                      // output stream
-  std::shared_ptr<std::ostream> outstream_mm;    // output stream
+  std::shared_ptr<std::ostream> outstream_mm;    // managed output stream
   std::streamsize prec_;                         // precision
   std::string hcol_;                             // highlighting color
   std::string hcol_r_;                           // neutral color
@@ -394,7 +438,7 @@ class DebugPrinter {
     res[SIGSYS] = "SIGSYS";
     return res;
   }
-  static DebugPrinter & static_init() { static DebugPrinter d; return d; }
+  //~ static DebugPrinter & static_init() { static DebugPrinter d; return d; }
   static void signal_handler(int signum) {
     static DebugPrinter d;
     d << "DebugPrinter handler caught signal "
@@ -424,13 +468,6 @@ class DebugPrinter {
 
   #endif // DEBUGPRINTER_NO_CXXABI
 
-  // type() not public, since it has a weaker interface (no types as arguments)
-  // than dout_TYPE
-  template <typename T>
-  inline void type(T obj) const {
-    detail::type_name(*this, std::string(typeid(obj).name()));
-  }
-
   // Fetch different parts from a stack trace line
 #ifdef __APPLE__
   inline std::string prog_part(const std::string str) const {
@@ -448,7 +485,7 @@ class DebugPrinter {
   inline std::string offset_part(const std::string str) const {
     std::stringstream ss(str);
     std::string res;
-    ss >> res; ss >> res; ss >> res; ss >> res; ss >> res;
+    ss >> res; ss >> res; ss >> res; ss >> res; ss >> res; ss >> res;
     return res;
   }
   inline std::string address_part(const std::string str) const {
@@ -489,11 +526,11 @@ class DebugPrinter {
   typename std::enable_if<!B, void>::type
     print_stream_impl(const U& label, const V& obj, const std::string&) const {
       int dummy;
-      std::string stream = typeid(*outstream).name();
       *outstream << "DebugPrinter error: object of type ";
                     has_stream<U>::value ? type(obj) : type(label);
       *outstream << "                    has no suitable "
-                 << demangle(stream, dummy) << " operator<< overload." << std::endl;
+                 << demangle(typeid(*outstream).name(), dummy)
+                 << " operator<< overload." << std::endl;
   }
   template <bool B, typename U, typename V>
   typename std::enable_if<B, void>::type
@@ -543,8 +580,8 @@ DebugPrinter & operator<<(DebugPrinter & d, const T& output) {
   std::streamsize savep = out.precision();
   std::ios_base::fmtflags savef =
       out.setf(std::ios_base::fixed, std::ios::floatfield);
-  out << std::setprecision((int)d.prec_) << std::fixed << output
-      << std::setprecision((int)savep);
+  out << std::setprecision(static_cast<int>(d.prec_)) << std::fixed << output
+      << std::setprecision(static_cast<int>(savep));
   out.setf(savef, std::ios::floatfield);
   out.flush();
   return d;
@@ -608,13 +645,18 @@ static DebugPrinter& dout = *new DebugPrinter;
 #define dout_VAR(x) fsc::dout(#x, x, " = ");
 
 /** \brief Print demangled type information of given variable or type.
- *  \details Example usage:
+ *  \param ...  Can't be an incomplete type.
+ *  \details This macro accepts both instances and types, but drops the type
+ *  reference traits and cv-qualifiers (compare `typeid`). For more verbose
+ *  output, check the `fsc::DebugPrinter::type<T>()` and
+ *  `fsc::DebugPrinter::type(T)` methods. Example usage:
  *  ~~~{.cpp}
- *      dout_TYPE(std::map<int,int>)
- *      dout_TYPE(var)
+ *      dout_TYPE(std::map<T,U>)   // in a template
+ *      dout_TYPE(var)             // var is an instance
  *  ~~~
  */
-#define dout_TYPE(...) fsc::DebugPrinter::detail::type_name(fsc::dout, typeid( __VA_ARGS__ ).name());
+#define dout_TYPE(...) fsc::DebugPrinter::detail::\
+                        type_name(fsc::dout, typeid( __VA_ARGS__ ).name());
 
 /** \brief Print a stack trace.
  *  \details Shortcut for
@@ -664,6 +706,16 @@ static DebugPrinter dout;
 
 
 #endif // DEBUGPRINTER_OFF
+
+namespace detail {
+  /// \cond DEBUGPRINTER_DONOTDOCME_HAVESOMEDECENCY_PLEASE
+  namespace dont_even_ask {
+
+    inline void function() { (void)dout; }
+
+  }
+  /// \endcond
+}
 
 } // namespace fsc
 
