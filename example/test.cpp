@@ -52,176 +52,24 @@ void segfault_function() { }
 
 
 
-
-/*******************************************************************************
- * constexpr bools
- */
-template <typename T> constexpr bool isConst(T&) { return false; }
-template <typename T> constexpr bool isConst(T const&) { return true; }
-
-/*******************************************************************************
- * distinguish qualifiers
- * 1) sfinae activation
- * 2) with is_same with a struct for each qualifier and then squash them
- */
-template <int T, typename U>
-auto tt(U t) -> typename std::enable_if<!std::is_reference<decltype(t)>::value, void>::type {
-    (void)t;
-    dout_FUNC
-    dout_TYPE_OF(T)
-    dout_TYPE(U)
-    std::cout << isConst(t) << std::endl;
-    dout_HERE
-    std::cout << std::is_const<decltype(t)>() << std::endl;
-    std::cout << std::is_reference<decltype(t)>() << std::endl;
-    std::cout << std::is_lvalue_reference<decltype(t)>() << std::endl;
-    std::cout << std::is_rvalue_reference<decltype(t)>() << std::endl;
-    //~ std::cout << __PRETTY_FUNCTION__ << std::endl;
-}
-//~ template <int T, typename U>
-//~ auto tt(U & t) -> typename std::enable_if<std::is_reference<decltype(t)>::value, void>::type {
-    //~ (void)t;
-    //~ dout_FUNC
-    //~ dout_TYPE(T)
-    //~ dout_TYPE(U)
-    //~ std::cout << isConst(t) << std::endl;
-    //~ dout_HERE
-    //~ std::cout << std::is_const<decltype(t)>() << std::endl;
-    //~ std::cout << std::is_reference<decltype(t)>() << std::endl;
-    //~ std::cout << std::is_lvalue_reference<decltype(t)>() << std::endl;
-    //~ std::cout << std::is_rvalue_reference<decltype(t)>() << std::endl;
-//~ }
-//~ template <typename T, typename U>
-//~ void tt(U t) {
-    //~ (void)t;
-    //~ dout_FUNC
-    //~ dout_TYPE(T)
-    //~ dout_TYPE(U)
-//~ }
+// maybe...
+template <std::nullptr_t VAL>
+void maybe(const void* p) { (void)p; }
 
 
-
-/*****************************************/ // CHECK THIS ONE
-//~ template <typename T>
-//~ decltype(auto) ttt(T && t) {
-    //~ constexpr std::string c = isConst(t) ? "const " : "";
-    //~ constexpr std::string v = isVolatile(t) ? "volatile " : "";
-    //~ constexpr std::string v = isLRef(t) ? "& " : "";
-    //~ constexpr std::string v = isRRef(t) ? "&& " : "";
-//~ }
-
-
-
-
-/*******************************************************************************
- * type_info grabbing
- */
-//~ template <typename *(std::type_info*)(T), typename U>
-//~ void tt(U t) {
-    //~ (void)t;
-    //~ dout_FUNC
-    //~ dout_TYPE(T)
-    //~ dout_TYPE(U)
-//~ }
-//~ template <std::type_info* T, typename U>
-//~ void tt(U t) {
-    //~ (void)t;
-    //~ dout_FUNC
-    //~ dout_TYPE(T)
-    //~ dout_TYPE(U)
-//~ }
-// typeid(int)      *(const std::type_info*)(& _ZTIi)’
-// typeid(c int)    *(const std::type_info*)(& _ZTIi)’
-// typeid(c char)   *(const std::type_info*)(& _ZTIc)’
-
-
-//~ #define V(x) tt<x>(x)
-//~ #define V(x) tt<typeid(x)>(x)
-//~ #define V(x) tt<__typeof__(x)>(x)
-
-
-/*******************************************************************************
- * variadic templates, std=c++14
- * split vt<typename T, typename U> and vt<typename T, ...> where ... = concrete types
- */
-//~ template <typename... Ts>
-//~ void vari() {}
-template <int Ts>
-void vari() {}
-
-
-/*******************************************************************************
- * void*
- */
-
-//~ template <std::nullptr V>
-//~ void maybe(V* p) { (void)p; }
-template <long int V>
-void maybe(void* p) { (void)p; (void)V; }
-//~ void maybe(char* p) { (void)p; }
-
-
-//~ maybe<5>   -> int
-//~ maybe<int> -> int
-template<typename T>
-void fct(T && t) {
-    dout_TYPE(T)
-    dout_TYPE_OF(t)
-}
-
-template <typename... T>
-struct foos{};
 
 int main() {
 
-    //~ dout_TYPE(foos<int, char>)
-//~ return 0;
-
+// maybe...
 constexpr char aa = 1; (void)aa;
-//~ constexpr void* aap = static_cast<void*>(&aa);
-//~ constexpr long int aai = (long int) &aap;  // can't be pointers
+const void* aap = static_cast<const void*>(&aa);
+const long int aai = (long int) &aap;  // can't be pointers
+(void)aai;
 //~ maybe<static_cast<void*>(&aa)>(static_cast<void*>(&aa));
 //~ maybe<(long int)&aap>(aap);
-//~ maybe<aai>(aap);
-
-std::cout << (long)&aa << std::endl;
+//~ maybe<std::nullptr>(aap);
 //~ std::cout << (long)static_cast<void*>(&aa) << std::endl;
 
-//~ vari<typeid(4)>();
-
-//~ tt<volatile int&&>(int());
-//~ tt<aa>(int());
-//~ V(aa);
-//~ V('a');
-//~ V(int);
-
-//~ std::cout << __typeof__(aa) << std::endl;
-
-decltype(std::declval<int>()) asdf=5;(void)asdf;
-//~ std::cout << typeid(decltype(aa)).name() << std::endl;
-//~ std::cout << typeid(decltype((aa))).name() << std::endl;
-//~ std::cout << typeid(decltype((int))).name() << std::endl;
-
-//~ dout_HERE
-//~ dout.type<decltype(5)>(5);
-//~ dout.type(aa);
-int a;
-    dout_TYPE(int)
-    dout_TYPE(const int)
-    dout_TYPE(int&)
-    dout_TYPE(volatile const int&)
-    dout_TYPE(volatile int&&)
-    dout_VAL(a)
-    dout_VAL(4)
-    dout_TYPE_OF(a)
-    dout_TYPE_OF(4)
-    volatile int && zz = 1;
-    volatile int & zzr = zz;
-    dout_TYPE_OF(zz)
-    dout_TYPE_OF(std::move(zzr))
-    fct(a);
-    fct(std::move(a));
-//~ return 0;
 
     dout = std::cerr;
     dout.set_color("1;34");
@@ -233,7 +81,23 @@ int a;
         dout.set_color();
     }
 
+    dout_HERE
+
+    int && a = 0;
+    int & ar = a;
+    dout_TYPE_OF(a)
+    dout_TYPE_OF(std::move(ar))
+    dout_TYPE(volatile const int&)
+    dout_TYPE(std::map<int, int>);
+    dout_TYPE_OF(4)
+    dout_VAL(a)
+
+    dout_HERE
+
     Bar<char&> b;
+
+    dout(b);
+    dout("label", "foo", "\t\t");
 
     dout_HERE
 
@@ -241,24 +105,12 @@ int a;
 
     dout_HERE
 
-    dout(b);
-    //~ dout("label", b, "  ");
-    dout("label", "foo", "\t");
-
-    dout_HERE
-
-    int x = 5;
-    dout_VAL(x);
-    dout_TYPE_OF(42);
-
-    dout_VAL(b);
-    dout_TYPE(std::map<int, int>);
     dout_TYPE_OF(b);
     dout_TYPE_OF(&Bar<double>::foo<int, std::string, 84>);
-    dout_TYPE_OF(f1);
 
     dout_HERE
 
+    dout_TYPE_OF(f1);
     f1();
 
     dout_HERE
