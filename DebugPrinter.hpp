@@ -651,7 +651,6 @@ inline DebugPrinter & operator,(DebugPrinter & d,
 //                  (stop BLC design like shared_ptr on DebugPrinter::outstream)
 /** \brief Static global heap-allocated object.*/
 static DebugPrinter& dout = *new DebugPrinter;
-//~ DebugPrinter * DebugPrinter::detail::THIS = &dout;
 
 /** Macros ********************************************************************/
 
@@ -728,8 +727,6 @@ class DebugPrinter {
   inline void set_precision(int) noexcept {}
   inline void set_color(...) noexcept {}
   inline void operator()(...) const {}
-  //~ template <typename T> inline void type(T) const {}
-  //~ template<typename T> const std::string valueness(T &&) const noexcept {}
   inline void stack(...) const {}
 };
 
