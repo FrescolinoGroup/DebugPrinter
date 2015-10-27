@@ -3,7 +3,7 @@
  * \file       DebugPrinter.hpp
  * \brief      DebugPrinter header-only lib.
  * >           Creates a static object named `dout` and defines debugging macros.
- * \version    2015.0903
+ * \version    2015.1027
  * \author
  * Year      | Name
  * :-------: | -------------
@@ -13,7 +13,7 @@
  * \copyright  Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at\n
- *     http://www.apache.org/licenses/LICENSE-2.0\n
+ *     http://www.apache.org/licenses/LICENSE-2.0 \n
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,7 +31,8 @@
  * Pass `DEBUGPRINTER_OFF` to turn off all functionality provided here. The 
  * debug statements can be left in the code, since all methods and macros 
  * become inline and trivial, and thus will be optimised away by the 
- * compiler at sufficient optimisation flags.
+ * compiler at sufficient optimisation flags. This flag will be automatically
+ * assumed if the standard `NDEBUG` is passed.
  * 
  * Pass `DEBUGPRINTER_NO_EXECINFO` flag on Windows (makes `stack()`,
  * `dout_STACK` and `dout_FUNC` trivial).
@@ -47,14 +48,14 @@
  * 
  ******************************************************************************/
 
-
-// ToDo: dout_TYPE checks for ref status: dout_TYPE(int&) vs dout_type(int&&)
-// ToDo: sprinkle noexcept
-// ToDo: in Makefile
 #ifndef DEBUGPRINTER_HEADER
 #define DEBUGPRINTER_HEADER
 
 #include <iostream>
+
+#ifdef NDEBUG
+#define DEBUGPRINTER_OFF
+#endif
 
 #ifndef DEBUGPRINTER_OFF
 
@@ -100,11 +101,11 @@ namespace fsc {
  *      // basic usage:
  * 
  *      dout_HERE                      // print current file and line
- *      dout_FUNC                      // print current function signature
+ *      dout_FUNC                      // print full current function signature
  *      dout_STACK                     // print stack trace
- *      dout_TYPE(std::map<T,U>)       // print given type (no qualifiers)
- *      dout_TYPE(var)                 // print RTTI of variable (no qualifiers)
- *      dout_VAR(var)                  // print highlighted 'name = value'
+ *      dout_TYPE(std::map<T,U>)       // print given type
+ *      dout_TYPE_OF(var)              // print RTTI of variable
+ *      dout_VAL(var)                  // print highlighted 'name = value'
  * 
  * 
  *      // advanced usage:
@@ -176,7 +177,7 @@ class DebugPrinter {
    *  The DebugPrinter assumes that the object is managed elsewhere (to have it
    *  take ownership, check the assigment operator for moving streams).
    */
-  inline void operator=(std::ostream & os) { outstream = &os; }
+  inline void operator=(std::ostream & os) noexcept { outstream = &os; }
 
   /** \brief Assignment operator for moving streams
    *  \param os  output stream to take over
@@ -194,8 +195,8 @@ class DebugPrinter {
    */
   template <typename T>
   inline auto operator=(T && os)
-    ->  typename std::enable_if<std::is_move_assignable<T>::value
-                             && std::is_rvalue_reference<decltype(os)>::value, void>::type {
+    ->  std::enable_if_t<std::is_move_assignable<T>::value
+                      && std::is_rvalue_reference<decltype(os)>::value> {
     outstream_mm = std::shared_ptr<std::ostream>(new T(std::move(os)));
     outstream = outstream_mm.get();
   }
@@ -207,14 +208,14 @@ class DebugPrinter {
    *      dout.set_precision(12);
    *  ~~~
    */
-  inline void set_precision(std::streamsize prec) { prec_ = prec; }
+  inline void set_precision(std::streamsize prec) noexcept { prec_ = prec; }
 
   /** \brief Highlighting color
    *  \param str  color code
    *  \details
    *  Assumes a `bash` compatible terminal and sets the `operator()`
    *  highlighting color (also used for `dout_HERE` and `dout_VAR`), for example
-   *  red == "0;31" (default). Usage example:
+   *  red == "0;31" (default). Example usage:
    *  ~~~{.cpp}
    *      dout.set_color("1;34");
    *  ~~~
@@ -229,13 +230,13 @@ class DebugPrinter {
       throw std::runtime_error("DebugPrinter error: invalid set_color() argument");
   }
   /** \brief Remove highlighting color
-   *  \details No color highlighting (e.g. when writing to a file). Usage
-   *  example:
+   *  \details No color highlighting (e.g. when writing to a file). Example
+   *  usage:
    *  ~~~{.cpp}
    *      dout.set_color();
    *  ~~~
    */
-  inline void set_color() {  // no chaining <- returns void
+  inline void set_color() noexcept {  // no chaining <- returns void
     hcol_ = "";
     hcol_r_ = "";
   }
@@ -277,28 +278,6 @@ class DebugPrinter {
 /*******************************************************************************
  * Info on type and RTTI (stack)
  */
-
-  //~ template <typename T>
-  //~ inline void type(T obj) const {
-    //~ std::string traits = "";
-//~ 
-    //~ std::cout << std::is_const<decltype(obj)>() << std::endl;
-    //~ std::cout << std::is_reference<decltype(obj)>() << std::endl;
-    //~ std::cout << std::is_lvalue_reference<decltype(obj)>() << std::endl;
-    //~ std::cout << std::is_rvalue_reference<decltype(obj)>() << std::endl; 
-    //~ std::cout << std::is_const<T>() << std::endl;
-    //~ std::cout << std::is_reference<T>() << std::endl;
-    //~ std::cout << std::is_lvalue_reference<T>() << std::endl;
-    //~ std::cout << std::is_rvalue_reference<T>() << std::endl; 
-//~ 
-// T(obj) ...
-    //~ if(std::is_const<T>()) traits += "const ";
-    //~ detail::type_name(*this, std::string(typeid(obj).name()), traits);
-  //~ }
-  template <typename T>
-  inline auto type(const T obj) const -> void {  // enable if
-    std::cout << "asdsf" << obj << std::endl;
-  }
 
   #ifndef DEBUGPRINTER_NO_EXECINFO
   /** \brief Print a stack trace
@@ -403,14 +382,51 @@ class DebugPrinter {
   /// \cond DEBUGPRINTER_DONOTDOCME_HAVESOMEDECENCY_PLEASE
   struct detail {
 
-    inline static void type_name(const DebugPrinter &dout,
-                                 const std::string & name,
-                                 const std::string & traits = "") {
-      int dummy;
-      *(dout.outstream) << traits << dout.demangle(name, dummy) << std::endl;
+    DebugPrinter & super;
+
+    // Simulate method specialisation through overloading
+    template<typename T> struct fwdtype {};
+
+    // Specialisation for type printing, used through dout_TYPE and dout_TYPE_OF
+    #define DEBUGPRINTER_TYPE_SPEC(mods)                                       \
+    template <typename T>                                                      \
+    inline void type(detail::fwdtype<T mods>, std::string valness = "") const {\
+      int dummy;                                                               \
+      auto mod = super.mod_split(std::string(#mods));                          \
+      super << mod.first << super.demangle(typeid(T).name(), dummy)            \
+            << mod.second << valness << std::endl;                             \
+    }                                                                         //
+    DEBUGPRINTER_TYPE_SPEC()
+    DEBUGPRINTER_TYPE_SPEC(&)
+    DEBUGPRINTER_TYPE_SPEC(&&)
+    DEBUGPRINTER_TYPE_SPEC(const)
+    DEBUGPRINTER_TYPE_SPEC(const &)
+    DEBUGPRINTER_TYPE_SPEC(const &&)
+    DEBUGPRINTER_TYPE_SPEC(volatile)
+    DEBUGPRINTER_TYPE_SPEC(volatile &)
+    DEBUGPRINTER_TYPE_SPEC(volatile &&)
+    DEBUGPRINTER_TYPE_SPEC(const volatile)
+    DEBUGPRINTER_TYPE_SPEC(const volatile &)
+    DEBUGPRINTER_TYPE_SPEC(const volatile &&)
+    #undef DEBUGPRINTER_TYPE_SPEC
+
+    // Get valueness of provided variable
+    template<typename T>
+    const std::string valueness(T &&) const noexcept {
+        return super.valueness_impl(fwdtype<T>());
     }
 
-  };
+    // Was used to print types and vars through same iface, but loses cv + ref
+    // We cannot implement a function like sizeof() and typeid() that takes
+    // types and instances.
+    // ToDo: or can we?
+    inline void type_name(const std::string & name,
+                          const std::string & traits = "") {
+      int dummy;
+      *(super.outstream) << traits << super.demangle(name, dummy) << std::endl;
+    }
+
+  } const detail_{*this};
   /// \endcond
 
 /*******************************************************************************
@@ -454,22 +470,21 @@ class DebugPrinter {
   #ifndef DEBUGPRINTER_NO_CXXABI
 
   inline std::string demangle(const std::string & str, int & status) const {
-    char * demangled = abi::__cxa_demangle(str.c_str(), 0, 0, &status);
-    std::string out = (status==0) ? std::string(demangled) : str;
-    free(demangled);
-    return out;
+    std::unique_ptr<char, void(*)(void*)>  // needs to call free, not delete
+      dmgl(abi::__cxa_demangle(str.c_str(), 0, 0, &status), std::free);
+    return (status==0) ? dmgl.get() : str;  // calls string ctor for char*
   }
 
   #else // DEBUGPRINTER_NO_CXXABI
 
-  inline std::string demangle(const std::string & str, int &) const {
+  inline std::string demangle(const std::string & str, int &) const noexcept {
     return str;
   }
 
   #endif // DEBUGPRINTER_NO_CXXABI
 
   // Fetch different parts from a stack trace line
-#ifdef __APPLE__
+  #ifdef __APPLE__
   inline std::string prog_part(const std::string str) const {
     std::stringstream ss(str);
     std::string res;
@@ -494,7 +509,7 @@ class DebugPrinter {
     ss >> res; ss >> res; ss >> res;
     return res;
   }
-#else
+  #else
   inline std::string prog_part(const std::string str) const {
     return str.substr(0, str.find("("));
   }
@@ -513,41 +528,42 @@ class DebugPrinter {
     if(pos == std::string::npos) return "";
     else return str.substr(pos+1, str.find("]", pos) - pos-1);
   }
-#endif
+  #endif
 
   // Used for set_color validation
-  bool is_number(const std::string& s) {
+  bool is_number(const std::string& s) const {
     return !s.empty() && std::find_if(s.begin(), s.end(),
                             [](char c) { return !std::isdigit(c); }) == s.end();
   }
 
   // Implementation of operator()
   template <bool B, typename U, typename V>
-  typename std::enable_if<!B, void>::type
-    print_stream_impl(const U& label, const V& obj, const std::string&) const {
-      int dummy;
-      *outstream << "DebugPrinter error: object of type ";
-                    has_stream<U>::value ? type(obj) : type(label);
-      *outstream << "                    has no suitable "
-                 << demangle(typeid(*outstream).name(), dummy)
-                 << " operator<< overload." << std::endl;
+  std::enable_if_t<!B>
+  print_stream_impl(const U& label, const V& obj, const std::string&) const {
+    auto typ = [this](const auto & obj)  // careless (dummy) demangle wrapper
+               { int dummy = 0; return demangle(typeid(obj).name(), dummy); };
+    *outstream << "DebugPrinter error: object of type "
+               << ( has_stream<U>::value ? typ(obj) : typ(label) ) << std::endl
+               << "                    has no suitable " << typ(*outstream)
+               << " operator<< overload." << std::endl;
   }
   template <bool B, typename U, typename V>
-  typename std::enable_if<B, void>::type
-    print_stream_impl(const U& label, const V& obj, const std::string& sc) const {
-      *outstream << hcol_ << label << sc << obj
-                 << hcol_r_ << std::endl;
+  std::enable_if_t<B>
+  print_stream_impl(const U& label, const V& obj, const std::string& sc) const {
+    *outstream << hcol_ << label << sc << obj
+               << hcol_r_ << std::endl;
   }
 
 
   // ToDo: move to external component
   template <bool B, typename... T>
   struct m_and_impl {
-    typedef std::integral_constant<bool , B> type;
+    using type = std::integral_constant<bool , B>;
   };
+
   template <bool B, typename T, typename... U>
   struct m_and_impl<B, T, U...> {
-    typedef typename m_and_impl<B && T::value, U...>::type type;
+    using type = typename m_and_impl<B && T::value, U...>::type;
   };
   template <typename... T>
   struct m_and : public m_and_impl<true, T...>::type {
@@ -556,16 +572,35 @@ class DebugPrinter {
   template<typename T, typename S>
   struct has_stream_impl {
       template<typename U>
-      static auto check(int)
+      static auto check(int) noexcept
         -> decltype( std::declval<U>() << std::declval<T>(), std::true_type() );
       template<typename>
-      static auto check(...) -> std::false_type;
-      typedef decltype(check<S>(0)) type;
+      static auto check(...) noexcept -> std::false_type;
+      using type = decltype(check<S>(0));
   };
 
   template<typename T, typename S = std::ostream>
   struct has_stream : public has_stream_impl<T, S&>::type {  // that ::type implicitly has ::value
   };
+
+  // Used to split mods for type()/type_of()
+  std::pair<std::string, std::string> mod_split(const std::string & s) const {
+    auto pos = s.find('&');
+    pos = pos==std::string::npos ? s.size() : pos;
+    std::string first = s.substr(0, pos), second = s.substr(pos);
+
+    if(first.size() > 0 && first.back()!= ' ') first += " ";
+    if(second.size() > 0) second = " " + second;
+    return std::make_pair(first, second);
+  }
+
+  // Used for valueness printing
+  template <typename T>
+  const std::string valueness_impl(detail::fwdtype<T>) const noexcept
+    { return " (r-value)"; }
+  template <typename T>
+  const std::string valueness_impl(detail::fwdtype<T&>) const noexcept
+    { return " (l-value)"; }
 
 };
 
@@ -616,16 +651,18 @@ inline DebugPrinter & operator,(DebugPrinter & d,
 //                  (stop BLC design like shared_ptr on DebugPrinter::outstream)
 /** \brief Static global heap-allocated object.*/
 static DebugPrinter& dout = *new DebugPrinter;
+//~ DebugPrinter * DebugPrinter::detail::THIS = &dout;
 
 /** Macros ********************************************************************/
 
 /** \brief Print current line
- *  \details Shortcut for
+ *  \details Shortcut for (pseudocode)
  *  ~~~{.cpp}
- *      fsc::dout(__FILE__ ,__LINE__);
+ *      fsc::dout(__FILE__ ,__LINE__ + __func__);
  *  ~~~
  */
-#define dout_HERE fsc::dout(__FILE__ ,__LINE__);
+#define dout_HERE fsc::dout(__FILE__ ,         std::to_string(__LINE__)        \
+                                      + " (" + std::string(__func__) + ")",":");
 
 /** \brief Print current function signature
  *  \details Shortcut for
@@ -642,21 +679,33 @@ static DebugPrinter& dout = *new DebugPrinter;
  *      fsc::dout(#var, var, " = ");
  *  ~~~
  */
-#define dout_VAR(x) fsc::dout(#x, x, " = ");
+#define dout_VAL(x) fsc::dout(#x, x, " = ");
 
-/** \brief Print demangled type information of given variable or type.
+/** \brief Print demangled type information of given type.
  *  \param ...  Can't be an incomplete type.
- *  \details This macro accepts both instances and types, but drops the type
- *  reference traits and cv-qualifiers (compare `typeid`). For more verbose
- *  output, check the `fsc::DebugPrinter::type<T>()` and
- *  `fsc::DebugPrinter::type(T)` methods. Example usage:
+ *  \details This macro prints the instantiated demangled input type.
+ *  Example usage:
  *  ~~~{.cpp}
  *      dout_TYPE(std::map<T,U>)   // in a template
- *      dout_TYPE(var)             // var is an instance
  *  ~~~
  */
-#define dout_TYPE(...) fsc::DebugPrinter::detail::\
-                        type_name(fsc::dout, typeid( __VA_ARGS__ ).name());
+#define dout_TYPE(...) dout.detail_.type(                                      \
+  fsc::DebugPrinter::detail::fwdtype<__VA_ARGS__>()                            \
+);                                                                            //
+
+/** \brief Print demangled type information of given variable.
+ *  \param ...  Can't have an incomplete type.
+ *  \details This macro prints the demangled RTTI of the input variable.
+ *  Example usage:
+ *  ~~~{.cpp}
+ *      dout_TYPE_OF(var)          // var is an object
+ *  ~~~
+ */
+
+#define dout_TYPE_OF(...) dout.detail_.type(                                   \
+  fsc::DebugPrinter::detail::fwdtype<decltype(__VA_ARGS__)>(),                 \
+  dout.detail_.valueness(__VA_ARGS__)                                          \
+);                                                                            //
 
 /** \brief Print a stack trace.
  *  \details Shortcut for
@@ -674,16 +723,13 @@ static DebugPrinter& dout = *new DebugPrinter;
 
 class DebugPrinter {
   public:
-
-  inline void operator=(std::ostream &) {}
+  inline void operator=(std::ostream &) noexcept {}
   inline void operator=(std::ostream &&) {}
-  inline void set_precision(int) {}
-  inline void set_color(...) {}
-
+  inline void set_precision(int) noexcept {}
+  inline void set_color(...) noexcept {}
   inline void operator()(...) const {}
-
-  template <typename T>
-  inline void type(T) const {}
+  //~ template <typename T> inline void type(T) const {}
+  //~ template<typename T> const std::string valueness(T &&) const noexcept {}
   inline void stack(...) const {}
 };
 
@@ -700,22 +746,23 @@ static DebugPrinter dout;
 
 #define dout_HERE ;
 #define dout_FUNC ;
-#define dout_VAR(...) ;
+#define dout_VAL(...) ;
 #define dout_TYPE(...) ;
+#define dout_TYPE_OF(...) ;
 #define dout_STACK ;
 
 
 #endif // DEBUGPRINTER_OFF
 
+/// \cond DEBUGPRINTER_DONOTDOCME_HAVESOMEDECENCY_PLEASE
 namespace detail {
-  /// \cond DEBUGPRINTER_DONOTDOCME_HAVESOMEDECENCY_PLEASE
   namespace dont_even_ask {
 
     inline void function() { (void)dout; }
 
   }
-  /// \endcond
 }
+/// \endcond
 
 } // namespace fsc
 

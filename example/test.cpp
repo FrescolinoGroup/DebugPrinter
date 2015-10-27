@@ -3,8 +3,6 @@
  * Compile with -O0 to prevent inlining of functions.
  * Compile with -rdynamic to get function names.
  */
-//~ g++     _Z2ttILi1EcENSt9enable_ifIXntsr  St12is_referenceIDtfp_EE 5valueEvE4typeET0_
-//~ clang++ _Z2ttILi1EcENSt9enable_ifIXntsr3std12is_referenceIDtfp_EEE5valueEvE4typeET0_
 
 //~ #define DEBUGPRINTER_OFF
 //~ #define DEBUGPRINTER_NO_EXECINFO
@@ -61,8 +59,6 @@ void segfault_function() { }
 template <typename T> constexpr bool isConst(T&) { return false; }
 template <typename T> constexpr bool isConst(T const&) { return true; }
 
-
-
 /*******************************************************************************
  * distinguish qualifiers
  * 1) sfinae activation
@@ -72,7 +68,7 @@ template <int T, typename U>
 auto tt(U t) -> typename std::enable_if<!std::is_reference<decltype(t)>::value, void>::type {
     (void)t;
     dout_FUNC
-    dout_TYPE(T)
+    dout_TYPE_OF(T)
     dout_TYPE(U)
     std::cout << isConst(t) << std::endl;
     dout_HERE
@@ -102,6 +98,20 @@ auto tt(U t) -> typename std::enable_if<!std::is_reference<decltype(t)>::value, 
     //~ dout_TYPE(T)
     //~ dout_TYPE(U)
 //~ }
+
+
+
+/*****************************************/ // CHECK THIS ONE
+//~ template <typename T>
+//~ decltype(auto) ttt(T && t) {
+    //~ constexpr std::string c = isConst(t) ? "const " : "";
+    //~ constexpr std::string v = isVolatile(t) ? "volatile " : "";
+    //~ constexpr std::string v = isLRef(t) ? "& " : "";
+    //~ constexpr std::string v = isRRef(t) ? "&& " : "";
+//~ }
+
+
+
 
 /*******************************************************************************
  * type_info grabbing
@@ -144,19 +154,38 @@ void vari() {}
  * void*
  */
 
-//~ template <typename std::nullptr V>
+//~ template <std::nullptr V>
 //~ void maybe(V* p) { (void)p; }
-//~ template <void* V>
+template <long int V>
+void maybe(void* p) { (void)p; (void)V; }
 //~ void maybe(char* p) { (void)p; }
 
 
+//~ maybe<5>   -> int
+//~ maybe<int> -> int
+template<typename T>
+void fct(T && t) {
+    dout_TYPE(T)
+    dout_TYPE_OF(t)
+}
+
+template <typename... T>
+struct foos{};
+
 int main() {
 
-char aa = 1; (void)aa;
+    //~ dout_TYPE(foos<int, char>)
+//~ return 0;
 
-//~ maybe<static_cast<void*>(&aa)>(&aa);
+constexpr char aa = 1; (void)aa;
+//~ constexpr void* aap = static_cast<void*>(&aa);
+//~ constexpr long int aai = (long int) &aap;  // can't be pointers
+//~ maybe<static_cast<void*>(&aa)>(static_cast<void*>(&aa));
+//~ maybe<(long int)&aap>(aap);
+//~ maybe<aai>(aap);
 
-std::cout << static_cast<void*>(&aa) << std::endl;
+std::cout << (long)&aa << std::endl;
+//~ std::cout << (long)static_cast<void*>(&aa) << std::endl;
 
 //~ vari<typeid(4)>();
 
@@ -173,11 +202,26 @@ decltype(std::declval<int>()) asdf=5;(void)asdf;
 //~ std::cout << typeid(decltype((aa))).name() << std::endl;
 //~ std::cout << typeid(decltype((int))).name() << std::endl;
 
-dout_HERE
-dout.type<decltype(5)>(5);
-dout.type(aa);
-
-return 0;
+//~ dout_HERE
+//~ dout.type<decltype(5)>(5);
+//~ dout.type(aa);
+int a;
+    dout_TYPE(int)
+    dout_TYPE(const int)
+    dout_TYPE(int&)
+    dout_TYPE(volatile const int&)
+    dout_TYPE(volatile int&&)
+    dout_VAL(a)
+    dout_VAL(4)
+    dout_TYPE_OF(a)
+    dout_TYPE_OF(4)
+    volatile int && zz = 1;
+    volatile int & zzr = zz;
+    dout_TYPE_OF(zz)
+    dout_TYPE_OF(std::move(zzr))
+    fct(a);
+    fct(std::move(a));
+//~ return 0;
 
     dout = std::cerr;
     dout.set_color("1;34");
@@ -193,25 +237,25 @@ return 0;
 
     dout_HERE
 
-    b.foo<std::string, double, 42>(1.23);
+    b.foo<std::string, const double &&, 42>(1.23);
 
     dout_HERE
 
-    //~ dout(b);
+    dout(b);
     //~ dout("label", b, "  ");
     dout("label", "foo", "\t");
 
     dout_HERE
 
     int x = 5;
-    dout_VAR(x);
-    //~ dout_VAR(b);
+    dout_VAL(x);
+    dout_TYPE_OF(42);
 
-    dout_TYPE(42);
+    dout_VAL(b);
     dout_TYPE(std::map<int, int>);
-    //~ dout_TYPE(b);
-    dout_TYPE((&Bar<double>::foo<int, std::string, 84>));
-    dout_TYPE(f1);
+    dout_TYPE_OF(b);
+    dout_TYPE_OF(&Bar<double>::foo<int, std::string, 84>);
+    dout_TYPE_OF(f1);
 
     dout_HERE
 
