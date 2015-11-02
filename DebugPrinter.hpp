@@ -48,6 +48,8 @@
  * 
  ******************************************************************************/
 
+// TODO: dout_TYPE_OF(expr) -> print expr and then int & (r-value)
+
 #ifndef DEBUGPRINTER_HEADER
 #define DEBUGPRINTER_HEADER
 
@@ -688,7 +690,7 @@ static DebugPrinter& dout = *new DebugPrinter;
  *      dout_TYPE(std::map<T,U>)   // in a template
  *  ~~~
  */
-#define dout_TYPE(...) dout.detail_.type(                                      \
+#define dout_TYPE(...) fsc::dout.detail_.type(                                 \
   fsc::DebugPrinter::detail::fwdtype<__VA_ARGS__>()                            \
 );                                                                            //
 
@@ -701,9 +703,9 @@ static DebugPrinter& dout = *new DebugPrinter;
  *  ~~~
  */
 
-#define dout_TYPE_OF(...) dout.detail_.type(                                   \
+#define dout_TYPE_OF(...) fsc::dout.detail_.type(                              \
   fsc::DebugPrinter::detail::fwdtype<decltype(__VA_ARGS__)>(),                 \
-  dout.detail_.valueness(__VA_ARGS__)                                          \
+  fsc::dout.detail_.valueness(__VA_ARGS__)                                     \
 );                                                                            //
 
 /** \brief Print a stack trace.
