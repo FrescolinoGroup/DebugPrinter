@@ -71,6 +71,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <memory>
+#include <type_traits>
 
 #ifndef DEBUGPRINTER_NO_EXECINFO
 #include <execinfo.h>
@@ -454,7 +455,9 @@ class DebugPrinter {
       std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
     template <typename T>
-    static T pausecheck(T t) { return t; }
+    static const T & pausecheck(const T & t) {
+      return t;
+    }
     static bool pausecheck() { return true; }
 
   } const detail_{*this};
