@@ -3,7 +3,7 @@
  * \file       DebugPrinter.hpp
  * \brief      DebugPrinter header-only lib.
  * >           Creates a static object named `dout` and defines debugging macros.
- * \version    2015.1027
+ * \version    2015.1104
  * \author
  * Year      | Name
  * :-------: | -------------
@@ -48,7 +48,8 @@
  * 
  ******************************************************************************/
 
-// TODO: dout_TYPE_OF(expr) -> print expr and then int & (r-value)
+// ToDo: constexpr DebugPrinter for compile-time (constexpr) debugging
+//       when setting a "constexpr string" as output
 
 #ifndef DEBUGPRINTER_HEADER
 #define DEBUGPRINTER_HEADER
@@ -108,9 +109,11 @@ namespace fsc {
  *      dout_TYPE(std::map<T,U>)       // print given type
  *      dout_TYPE_OF(var)              // print RTTI of variable
  *      dout_VAL(var)                  // print highlighted 'name = value'
+ *      dout_PAUSE()                   // wait for user input (enter key)
+ *      dout_PAUSE(expr)               // conditionally wait for user input
  * 
  * 
- *      // advanced usage:
+ *      // advanced usage (non-exhaustive):
  * 
  *      using fsc::dout;
  * 
@@ -210,7 +213,7 @@ class DebugPrinter {
    *      dout.set_precision(12);
    *  ~~~
    */
-  inline void set_precision(std::streamsize prec) noexcept { prec_ = prec; }
+  inline void set_precision(const std::streamsize prec) noexcept { prec_ = prec; }
 
   /** \brief Highlighting color
    *  \param str  color code
@@ -224,7 +227,7 @@ class DebugPrinter {
    *  For bash color codes check
    *  http://www.tldp.org/HOWTO/Bash-Prompt-HOWTO/x329.html
    */
-  inline void set_color(std::string str) {  // no chaining <- returns void
+  inline void set_color(const std::string str) {  // no chaining <- returns void
     if(is_number(str.substr(0,1)) && is_number(str.substr(2,2))) {
       hcol_ = "\033[" + str + "m";
       hcol_r_ = "\033[0m";
@@ -259,7 +262,7 @@ class DebugPrinter {
    *  ~~~
    */
   template <typename T, typename U>
-  inline void operator()(const T& label, const U& obj,
+  inline void operator()(const T & label, U const & obj,
                          const std::string sc = ": ") const {
     print_stream_impl<m_and<has_stream<T>, has_stream<U> >::value>(label, obj, sc);
   }
@@ -306,34 +309,42 @@ class DebugPrinter {
     ) const {
 
     std::ostream & out = *outstream;
-    int end_ = -1;               // ignore last
+
+    uint end = begin + backtrace_size;   // don't pull more than necessary
+    if(end > max_backtrace)
+      end = max_backtrace;
 
     void * stack[max_backtrace];
-    int r = backtrace(stack, backtrace_size+begin-end_);
-    char ** symbols = backtrace_symbols(stack, r);
-    if(!symbols) return;
+    uint r = backtrace(stack, end);
+    if(end == max_backtrace)             // prettiness hack: ignore binary line
+      --r;
+    end = r;                             // update to received end
+    char ** symbols = backtrace_symbols(stack, end);
 
-    int end = r + end_;
     if(compact == false)
       out << "DebugPrinter obtained " << end-begin << " stack frames:"
           << std::endl;
+    if(!symbols) return;
 
     #ifndef DEBUGPRINTER_NO_CXXABI
 
-    for(int i = begin; i < end; ++i) {
+    for(uint i = begin; i < end; ++i) {
       std::string line = std::string(symbols[i]);
       std::string prog = prog_part(line);
       std::string mangled = mangled_part(line);
       std::string offset = offset_part(line);
       std::string mainoffset = address_part(line);
+      if(mangled == "")
+        std::cerr << "DebugPrinter error: No dynamic symbol (you probably didn't compile with -rdynamic)"
+                  << std::endl;
       int status;
       std::string demangled = demangle(mangled, status);
       switch (status) {
         case -1:
-          out << " Error: Could not allocate memory!" << std::endl;
+          out << "DebugPrinter error: Could not allocate memory!" << std::endl;
           break;
         case -3:
-          out << " Error: Invalid argument to demangle()" << std::endl;
+          out << "DebugPrinter error: Invalid argument to demangle()" << std::endl;
           break;
         case -2:  // invalid name under the C++ ABI mangling rules
           demangled = mangled;
@@ -392,11 +403,16 @@ class DebugPrinter {
     // Specialisation for type printing, used through dout_TYPE and dout_TYPE_OF
     #define DEBUGPRINTER_TYPE_SPEC(mods)                                       \
     template <typename T>                                                      \
-    inline void type(detail::fwdtype<T mods>, std::string valness = "") const {\
+    inline void type(detail::fwdtype<T mods>,                                  \
+                     const std::string valness = "",                           \
+                     const std::string expr = "") const {                      \
       int dummy;                                                               \
+      std::string info = "";                                                   \
+      if(expr != "")                                                           \
+        info = "  {" + valness + " " + expr + "}";                             \
       auto mod = super.mod_split(std::string(#mods));                          \
       super << mod.first << super.demangle(typeid(T).name(), dummy)            \
-            << mod.second << valness << std::endl;                             \
+            << mod.second << info << std::endl;                                \
     }                                                                         //
     DEBUGPRINTER_TYPE_SPEC()
     DEBUGPRINTER_TYPE_SPEC(&)
@@ -422,11 +438,24 @@ class DebugPrinter {
     // We cannot implement a function like sizeof() and typeid() that takes
     // types and instances.
     // ToDo: or can we?
+    //       try appending #def TYPE TYPE_IMPL(input x) and abuse comma split
+    //       and typeid/sizeof for x
     inline void type_name(const std::string & name,
                           const std::string & traits = "") {
       int dummy;
       *(super.outstream) << traits << super.demangle(name, dummy) << std::endl;
     }
+
+    inline void pause(std::string reason) const {
+      if(reason != "") reason = " (" + reason + ")";
+      std::cout << "DebugPrinter paused" << reason
+                << ". Press ENTER to continue." << std::flush;
+      std::cin.clear();
+      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+    template <typename T>
+    static T pausecheck(T t) { return t; }
+    static bool pausecheck() { return true; }
 
   } const detail_{*this};
   /// \endcond
@@ -599,10 +628,10 @@ class DebugPrinter {
   // Used for valueness printing
   template <typename T>
   const std::string valueness_impl(detail::fwdtype<T>) const noexcept
-    { return " (r-value)"; }
+    { return "r-value"; }
   template <typename T>
   const std::string valueness_impl(detail::fwdtype<T&>) const noexcept
-    { return " (l-value)"; }
+    { return "l-value"; }
 
 };
 
@@ -702,10 +731,10 @@ static DebugPrinter& dout = *new DebugPrinter;
  *      dout_TYPE_OF(var)          // var is an object
  *  ~~~
  */
-
 #define dout_TYPE_OF(...) fsc::dout.detail_.type(                              \
-  fsc::DebugPrinter::detail::fwdtype<decltype(__VA_ARGS__)>(),                 \
-  fsc::dout.detail_.valueness(__VA_ARGS__)                                     \
+    fsc::DebugPrinter::detail::fwdtype<decltype(__VA_ARGS__)>()                \
+  , fsc::dout.detail_.valueness(__VA_ARGS__)                                   \
+  , #__VA_ARGS__                                                               \
 );                                                                            //
 
 /** \brief Print a stack trace.
@@ -715,6 +744,21 @@ static DebugPrinter& dout = *new DebugPrinter;
  *  ~~~
  */
 #define dout_STACK fsc::dout.stack();
+
+/** \brief Pause execution and wait for user key press.
+ *  \details A pause condition can be specified as argument. This must be a
+ *  valid expression for an if-statement.
+ *  Example usage:
+ *  ~~~{.cpp}
+ *     dout_PAUSE()
+ *     dout_PAUSE("label")
+ *     for(int i = 0; i < 10; ++i)
+ *       dout_PAUSE(i >= 8)
+ *  ~~~
+ */
+#define dout_PAUSE(...)                                                        \
+  if(fsc::dout.detail_.pausecheck(__VA_ARGS__))                                \
+    fsc::dout.detail_.pause(#__VA_ARGS__);                                    //
 
 /**
  * End DebugPrinter implementation
@@ -726,7 +770,7 @@ class DebugPrinter {
   public:
   inline void operator=(std::ostream &) noexcept {}
   inline void operator=(std::ostream &&) {}
-  inline void set_precision(int) noexcept {}
+  inline void set_precision(const int) noexcept {}
   inline void set_color(...) noexcept {}
   inline void operator()(...) const {}
   inline void stack(...) const {}
@@ -749,7 +793,7 @@ static DebugPrinter dout;
 #define dout_TYPE(...) ;
 #define dout_TYPE_OF(...) ;
 #define dout_STACK ;
-
+#define dout_PAUSE(...) ;
 
 #endif // DEBUGPRINTER_OFF
 

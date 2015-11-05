@@ -11,11 +11,8 @@
 #include "../DebugPrinter.hpp"
 using fsc::dout;
 
-#include <stdexcept>
 #include <fstream>
 #include <map>
-#include <utility>
-#include <type_traits>
 
 template <typename T>
 class Foo { public:
@@ -52,10 +49,10 @@ void segfault_function() { }
 
 
 
+
 // maybe...
 template <std::nullptr_t VAL>
-void maybe(const void* p) { (void)p; }
-
+void maybe(const void* p) { (void)p;/*p = VAL;*/ }
 
 
 int main() {
@@ -91,6 +88,18 @@ const long int aai = (long int) &aap;  // can't be pointers
     dout_TYPE(std::map<int, int>);
     dout_TYPE_OF(4)
     dout_VAL(a)
+
+    dout_HERE
+
+    dout_PAUSE()
+    dout_PAUSE("checkpoint 1")
+    dout_PAUSE(a == 0)
+    dout_PAUSE(a > 0)
+
+    for(int i = 0; i < 10; ++i) {
+        std::cout << i << " ";
+        dout_PAUSE(i>=8)
+    }
 
     dout_HERE
 

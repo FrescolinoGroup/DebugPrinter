@@ -1,6 +1,6 @@
 .PHONY: all
 
-GCC_WARN = -Werror -Wall -Wextra -Wpedantic
+GCC_WARN = -Wall -Wextra -Wpedantic
 CLANG_WARN = -Wmost -Wextra
 #~ CLANG_WARN = -Werror -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-missing-prototypes -Wno-exit-time-destructors -Wno-global-constructors -Wno-implicit-fallthrough -Wno-disabled-macro-expansion -Wno-documentation-unknown-command
 
