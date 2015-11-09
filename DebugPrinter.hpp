@@ -792,7 +792,7 @@ static DebugPrinter& dout = *new DebugPrinter;
  */
 #define dout_STACK fsc::dout.stack();
 
-/** \brief Pause execution and wait for user key press (ENTER).
+/** \brief Pause execution (optionally) and wait for user key press (ENTER).
  *  \param ...  \n
  *              A string literal can be specified as argument to act as label.\n
  *              A pause condition can be specified as argument. This must be a
