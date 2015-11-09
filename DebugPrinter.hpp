@@ -114,7 +114,7 @@ namespace fsc {
  *      dout_PAUSE(x < 10)             // conditionally wait for user input
  * 
  * 
- *      // advanced usage (non-exhaustive):
+ *      // advanced usage (non-exhaustive, check member details):
  * 
  *      using fsc::dout;
  * 
