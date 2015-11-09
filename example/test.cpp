@@ -9,6 +9,7 @@
 //~ #define DEBUGPRINTER_NO_CXXABI
 //~ #define DEBUGPRINTER_NO_SIGNALS
 #include "../DebugPrinter.hpp"
+
 using fsc::dout;
 
 #include <fstream>
@@ -35,9 +36,19 @@ class Bar : public Foo<double> { public:
         dout, x, std::endl;
         return RET();
     }
-
 };
 
+//~ template <typename T, typename U, typename = std::enable_if_t<std::is_same<T<U>, Foo<U>>::value> >
+//~ template <typename T, typename = std::enable_if_t<>::value>>
+template <typename T, typename...>
+std::ostream & operator<<(std::ostream & os, const Foo<T>) {
+//~ std::ostream & operator<<(std::ostream & os, const Foo<int>) {
+dout_FUNC
+    os << "It's a Foo!" << std::endl;
+    return os;
+}
+//~ template <typename T>
+//~ std::ostream & operator<<<Bar<T>>(std::ostream & os, const Foo<T> &) = delete;
 
 void f3() { dout_STACK }  // inlined if -O2 or -O3
 void f2() { f3(); }
@@ -48,25 +59,7 @@ void f1() { f2(); }
 void segfault_function() { }
 
 
-
-
-// maybe...
-template <std::nullptr_t VAL>
-void maybe(const void* p) { (void)p;/*p = VAL;*/ }
-
-
 int main() {
-
-// maybe...
-constexpr char aa = 1; (void)aa;
-const void* aap = static_cast<const void*>(&aa);
-const long int aai = (long int) &aap;  // can't be pointers
-(void)aai;
-//~ maybe<static_cast<void*>(&aa)>(static_cast<void*>(&aa));
-//~ maybe<(long int)&aap>(aap);
-//~ maybe<std::nullptr>(aap);
-//~ std::cout << (long)static_cast<void*>(&aa) << std::endl;
-
 
     dout = std::cerr;
     dout.set_color("1;34");
@@ -84,10 +77,9 @@ const long int aai = (long int) &aap;  // can't be pointers
     int & ar = a;
     dout_TYPE_OF(a)
     dout_TYPE_OF(std::move(ar))
+    dout_TYPE_OF(4)
     dout_TYPE(volatile const int&)
     dout_TYPE(std::map<int, int>);
-    dout_TYPE_OF(4)
-    dout_VAL(a)
 
     dout_HERE
 
@@ -97,7 +89,7 @@ const long int aai = (long int) &aap;  // can't be pointers
     dout_PAUSE(a > 0)
 
     for(int i = 0; i < 10; ++i) {
-        std::cout << i << " ";
+        std::cout << i << std::endl;
         dout_PAUSE(i>=8)
     }
 
@@ -106,7 +98,17 @@ const long int aai = (long int) &aap;  // can't be pointers
     Bar<char&> b;
 
     dout(b);
-    dout("label", "foo", "\t\t");
+    dout("label", "foo", "\t->\t");
+
+std::cout << b << std::endl;
+std::cout << *( reinterpret_cast<Foo<int>*>(&b) ) << std::endl;
+//~ operator<<<Foo<int>,int>(std::cout, *( reinterpret_cast<Foo<int>*>(&b) ) );
+Foo<int> f;
+std::cout << f << std::endl;
+//~ operator<< <int>(std::cout, f);
+//~ asdf <int>(std::cout, f);
+//std::ostream& operator<< <int>(std::ostream&, Foo<int>)
+return 0;
 
     dout_HERE
 

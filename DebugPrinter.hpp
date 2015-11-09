@@ -3,7 +3,7 @@
  * \file       DebugPrinter.hpp
  * \brief      DebugPrinter header-only lib.
  * >           Creates a static object named `dout` and defines debugging macros.
- * \version    2015.1104
+ * \version    2015.1110
  * \author
  * Year      | Name
  * :-------: | -------------
@@ -48,7 +48,7 @@
  * 
  ******************************************************************************/
 
-// ToDo: constexpr DebugPrinter for compile-time (constexpr) debugging
+// ToDo: constexpr DebugPrinter for compile-time debugging
 //       when setting a "constexpr string" as output
 
 #ifndef DEBUGPRINTER_HEADER
@@ -67,7 +67,6 @@
 #include <sstream>
 #include <typeinfo>
 #include <cstdlib>
-#include <signal.h>
 #include <algorithm>
 #include <stdexcept>
 #include <memory>
@@ -82,6 +81,7 @@
 #endif // DEBUGPRINTER_NO_CXXABI
 
 #ifndef DEBUGPRINTER_NO_SIGNALS
+#include <signal.h>
 #include <map>
 #endif // DEBUGPRINTER_NO_SIGNALS
 
@@ -111,7 +111,7 @@ namespace fsc {
  *      dout_TYPE_OF(var)              // print RTTI of variable
  *      dout_VAL(var)                  // print highlighted 'name = value'
  *      dout_PAUSE()                   // wait for user input (enter key)
- *      dout_PAUSE(expr)               // conditionally wait for user input
+ *      dout_PAUSE(x < 10)             // conditionally wait for user input
  * 
  * 
  *      // advanced usage (non-exhaustive):
@@ -193,7 +193,7 @@ class DebugPrinter {
    *          std::ofstream fs("debug.log");
    *          dout = std::move(fs);
    *          dout.set_color();
-   *      }
+   *      } // fs gets destroyed here
    *      dout << "This shows up in debug.log";
    *  ~~~
    *  Note: trying to move `std::cout` (or other static standard streams)
@@ -311,6 +311,8 @@ class DebugPrinter {
 
     std::ostream & out = *outstream;
 
+    using uint = unsigned int;
+
     uint end = begin + backtrace_size;   // don't pull more than necessary
     if(end > max_backtrace)
       end = max_backtrace;
@@ -362,7 +364,7 @@ class DebugPrinter {
 
     #else // DEBUGPRINTER_NO_CXXABI
 
-    for(int i = begin; i < end; ++i) {
+    for(uint i = begin; i < end; ++i) {
       if(compact == false)
         out << "  " << symbols[i] << std::endl;
       else
@@ -371,7 +373,7 @@ class DebugPrinter {
 
     if(compact == false) out << std::endl;
     out << "echo '' && c++filt";
-    for(int i = begin; i < end; ++i)
+    for(uint i = begin; i < end; ++i)
       out << " " << mangled_part(std::string(symbols[i]));
     out << " && echo ''" << std::endl;
     if(compact == false) out << std::endl;
@@ -686,53 +688,83 @@ inline DebugPrinter & operator,(DebugPrinter & d,
 /** \brief Static global heap-allocated object.*/
 static DebugPrinter& dout = *new DebugPrinter;
 
-/** Macros ********************************************************************/
+/*******************************************************************************
+ * Macros
+ */
 
-/** \brief Print current line
- *  \details Shortcut for (pseudocode)
+/** \brief Print current line in the form `filename:line (function)`
+ *  \details Example usage:
  *  ~~~{.cpp}
- *      fsc::dout(__FILE__ ,__LINE__ + __func__);
+ *      dout_HERE
  *  ~~~
+ *  Shortcut for (pseudocode):
+ *  ~~~{.cpp}
+ *      fsc::dout(__FILE__ ,__LINE__ + __func__, ":");
+ *  ~~~
+ * \hideinitializer
  */
 #define dout_HERE fsc::dout(__FILE__ ,         std::to_string(__LINE__)        \
                                       + " (" + std::string(__func__) + ")",":");
 
 /** \brief Print current function signature
- *  \details Shortcut for
+ *  \details Example usage:
+ *  ~~~{.cpp}
+ *      template<typename T> void f(T&&) {
+ *         dout_FUNC
+ *      }
+ *  ~~~
+ *  Shortcut for:
  *  ~~~{.cpp}
  *      fsc::dout.stack(1, true);
  *  ~~~
+ *  Needs to be compiled with `-rdynamic` (you will get an error message
+ *  otherwise)
+ * \hideinitializer
  */
 #define dout_FUNC fsc::dout.stack(1, true);
 
-/** \brief Print highlighted 'name = value' of given variable
- *  \param x  The variable
- *  \details Shortcut for preprocessed equivalent of
+/** \brief Print highlighted 'name = value' of given variable or expression
+ *  \param ...  the expression to print; must be streamable into the stream
+ *              object assigned to the currently used fsc::DebugPrinter
+ *  \details
+ *  Example usage:
  *  ~~~{.cpp}
- *      fsc::dout(#var, var, " = ");
+ *      int x = 5;
+ *      dout_VAL(x)
+ *      dout_VAL(1==2)
  *  ~~~
+ *  This is a shortcut for preprocessed equivalent of:
+ *  ~~~{.cpp}
+ *      fsc::dout(#expression, expression, " = ");
+ *  ~~~
+ * \hideinitializer
  */
-#define dout_VAL(x) fsc::dout(#x, x, " = ");
+#define dout_VAL(...) fsc::dout(#__VA_ARGS__, __VA_ARGS__, " = ");
 
 /** \brief Print demangled type information of given type.
- *  \param ...  Can't be an incomplete type.
- *  \details This macro prints the instantiated demangled input type.
+ *  \param ...  can't be an incomplete type.
+ *  \details This macro prints the instantiated demangled input type.\n
  *  Example usage:
  *  ~~~{.cpp}
  *      dout_TYPE(std::map<T,U>)   // in a template
  *  ~~~
+ * \hideinitializer
  */
 #define dout_TYPE(...) fsc::dout.detail_.type(                                 \
   fsc::DebugPrinter::detail::fwdtype<__VA_ARGS__>()                            \
 );                                                                            //
 
-/** \brief Print demangled type information of given variable.
- *  \param ...  Can't have an incomplete type.
- *  \details This macro prints the demangled RTTI of the input variable.
+/** \brief Print demangled type information of given variable or expression.
+ *  \param ...  can't have an incomplete type.
+ *  \details This macro prints the demangled (as specified by the local cxxabi)
+ *           RTTI of the input variable or resolved expression, including cvr
+ *           qualifiers and valueness.\n
  *  Example usage:
  *  ~~~{.cpp}
- *      dout_TYPE_OF(var)          // var is an object
+ *      dout_TYPE_OF(var)                           // var is an object
+ *      dout_TYPE_OF(std::cout << 1 << std::endl;)
  *  ~~~
+ * \hideinitializer
  */
 #define dout_TYPE_OF(...) fsc::dout.detail_.type(                              \
     fsc::DebugPrinter::detail::fwdtype<decltype(__VA_ARGS__)>()                \
@@ -741,23 +773,38 @@ static DebugPrinter& dout = *new DebugPrinter;
 );                                                                            //
 
 /** \brief Print a stack trace.
- *  \details Shortcut for
+ *  \details  Example usage:
+ *  ~~~{.cpp}
+ *      void f2() {
+ *        dout_STACK
+ *      }
+ *      void f1() {
+ *        f2();
+ *      }
+ *  ~~~
+ *  Shortcut for
  *  ~~~{.cpp}
  *     fsc::dout.stack();
  *  ~~~
+ *  Needs to be compiled with `-rdynamic` (you will get an error message
+ *  otherwise). Keep in mind that compiler optimisations will inline functions.
+ * \hideinitializer
  */
 #define dout_STACK fsc::dout.stack();
 
-/** \brief Pause execution and wait for user key press.
- *  \details A pause condition can be specified as argument. This must be a
- *  valid expression for an if-statement.
- *  Example usage:
+/** \brief Pause execution and wait for user key press (ENTER).
+ *  \param ...  \n
+ *              A string literal can be specified as argument to act as label.\n
+ *              A pause condition can be specified as argument. This must be a
+ *              valid expression for an if-statement.\n
+ *  \details Example usage:
  *  ~~~{.cpp}
  *     dout_PAUSE()
  *     dout_PAUSE("label")
  *     for(int i = 0; i < 10; ++i)
  *       dout_PAUSE(i >= 8)
  *  ~~~
+ * \hideinitializer
  */
 #define dout_PAUSE(...)                                                        \
   if(fsc::dout.detail_.pausecheck(__VA_ARGS__))                                \
