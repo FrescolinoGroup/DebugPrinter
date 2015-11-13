@@ -98,6 +98,7 @@ int main() {
     Bar<char&> b;
 
     dout(b);
+    //~ dout,b; // ToDo
     dout("label", "foo", "\t->\t");
 
 std::cout << b << std::endl;

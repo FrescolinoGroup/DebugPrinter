@@ -138,10 +138,10 @@ class DebugPrinter {
   public:
 
 /*******************************************************************************
- * Ctor and friends
+ * DebugPrinter ctor and friends
  */
  
-  /** \brief Constructor for dout and user specified DebugPrinter objects. */
+  /// \brief Constructor for dout and user specified DebugPrinter objects.
   DebugPrinter() {
 
     operator=(std::cout);
@@ -158,10 +158,10 @@ class DebugPrinter {
 
   }
 
-  /** \brief Deleted copy constructor */
+  /// \brief Deleted copy constructor
   DebugPrinter(const DebugPrinter &) = delete;
 
-  /** \brief Deleted move constructor */
+  /// \brief Deleted move constructor
   DebugPrinter(DebugPrinter &&) = delete;
 
   template <typename T>
@@ -171,7 +171,7 @@ class DebugPrinter {
                                           std::ostream& (*pf)(std::ostream&));
 
 /*******************************************************************************
- * Setters
+ * DebugPrinter setters
  */
 
   /** \brief Assignment operator for changing streams
@@ -248,7 +248,7 @@ class DebugPrinter {
   }
 
 /*******************************************************************************
- * Parentheses operators
+ * DebugPrinter parentheses operators
  */
 
   /** \brief Print highlighted label and object
@@ -282,7 +282,7 @@ class DebugPrinter {
   inline void operator()(const T& obj) const { operator()(">>>", obj, " "); }
 
 /*******************************************************************************
- * Info on type and RTTI (stack)
+ * DebugPrinter info on type and RTTI (stack)
  */
 
   #ifndef DEBUGPRINTER_NO_EXECINFO
@@ -392,7 +392,7 @@ class DebugPrinter {
   #endif // DEBUGPRINTER_NO_EXECINFO
 
 /*******************************************************************************
- * "Private" parts
+ * DebugPrinter "private" parts
  */
  
   /// \cond DEBUGPRINTER_DONOTDOCME_HAVESOMEDECENCY_PLEASE
@@ -466,7 +466,7 @@ class DebugPrinter {
   /// \endcond
 
 /*******************************************************************************
- * Private parts
+ * DebugPrinter private parts
  */
 
   private:
@@ -644,7 +644,7 @@ class DebugPrinter {
  * std::ostream overloads
  */
 
-/** \brief operator<< overload for std::ostream */
+/// \brief operator<< overload for std::ostream
 template <typename T>
 DebugPrinter & operator<<(DebugPrinter & d, const T& output) {
   std::ostream & out = *d.outstream;
@@ -658,7 +658,7 @@ DebugPrinter & operator<<(DebugPrinter & d, const T& output) {
   return d;
 }
 
-/** \brief operator<< overload for std::ostream manipulators */
+/// \brief operator<< overload for std::ostream manipulators
 inline DebugPrinter & operator<<(DebugPrinter & d,
                                  std::ostream& (*pf)(std::ostream&)) {
   std::ostream & out = *d.outstream;
@@ -666,13 +666,13 @@ inline DebugPrinter & operator<<(DebugPrinter & d,
   return d;
 }
 
-/** \brief operator, overload for std::ostream */
+/// \brief operator, overload for std::ostream
 template <typename T>
 inline DebugPrinter & operator,(DebugPrinter & d, const T& output) {
   return operator<<(d, output);
 }
 
-/** \brief operator, overload for std::ostream manipulators */
+/// \brief operator, overload for std::ostream manipulators
 inline DebugPrinter & operator,(DebugPrinter & d,
                                 std::ostream& (*pf)(std::ostream&)) {
   return operator<<(d, pf);
@@ -685,7 +685,7 @@ inline DebugPrinter & operator,(DebugPrinter & d,
 // Heap allocate => no destructor call at program exit (wiped by OS).
 //               => no management of std::ostream& possible
 //                  (stop BLC design like shared_ptr on DebugPrinter::outstream)
-/** \brief Static global heap-allocated object.*/
+/// \brief Static global heap-allocated object
 static DebugPrinter& dout = *new DebugPrinter;
 
 /*******************************************************************************
