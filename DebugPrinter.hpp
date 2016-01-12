@@ -22,6 +22,8 @@
  * 
  * \section dummy &nbsp;
  * \subsection Compilation Compilation
+ *
+ * DebugPrinter requires C++14.
  * 
  * Link with `-rdynamic` in order to properly get `stack()` frame names and
  * useful `dout_FUNC` output.
@@ -265,7 +267,7 @@ class DebugPrinter {
   template <typename T, typename U>
   inline void operator()(const T & label, U const & obj,
                          const std::string sc = ": ") const {
-    print_stream_impl<m_and<has_stream<T>, has_stream<U> >::value>(label, obj, sc);
+    print_stream_impl< has_stream<T> && has_stream<U> >(label, obj, sc);
   }
   /** \brief Print highlighted object
    *  \param obj    should have a std::ostream & operator<< overload
@@ -579,7 +581,7 @@ class DebugPrinter {
     auto typ = [this](const auto & obj)  // careless (dummy) demangle wrapper
                { int dummy = 0; return demangle(typeid(obj).name(), dummy); };
     *outstream << "DebugPrinter error: object of type "
-               << ( has_stream<U>::value ? typ(obj) : typ(label) ) << std::endl
+               << ( has_stream<U> ? typ(obj) : typ(label) ) << std::endl
                << "                    has no suitable " << typ(*outstream)
                << " operator<< overload." << std::endl;
   }
@@ -591,7 +593,8 @@ class DebugPrinter {
   }
 
 
-  // ToDo: move to external component
+  // ToDo: specialise on m_and (break on false before evaluating rest, faster compile)
+  //       and use in print_stream_impl instead of has_stream && has_stream
   template <bool B, typename... T>
   struct m_and_impl {
     using type = std::integral_constant<bool , B>;
@@ -607,17 +610,19 @@ class DebugPrinter {
 
   template<typename T, typename S>
   struct has_stream_impl {
-      template<typename U>
-      static auto check(int) noexcept
-        -> decltype( std::declval<U>() << std::declval<T>(), std::true_type() );
-      template<typename>
-      static auto check(...) noexcept -> std::false_type;
-      using type = decltype(check<S>(0));
+    template <typename T_, typename S_>
+    static auto check(T_ && t, S_ && s) -> decltype(  // test for any expression:
+      s << t,
+    std::true_type());
+    static std::false_type check(...);
+    using type = decltype(check( std::declval<T>(), std::declval<S>()));
   };
+  template<typename T, typename S = std::ostream&>
+  struct has_stream_t : public has_stream_impl<T, S>::type {};  // ::type stl boolean has ::value
+  template<typename T, typename S = std::ostream&>
+  static constexpr bool has_stream = has_stream_impl<T, S>::type::value;
 
-  template<typename T, typename S = std::ostream>
-  struct has_stream : public has_stream_impl<T, S&>::type {  // that ::type implicitly has ::value
-  };
+  
 
   // Used to split mods for type()/type_of()
   std::pair<std::string, std::string> mod_split(const std::string & s) const {
