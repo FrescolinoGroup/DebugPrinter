@@ -222,7 +222,7 @@ class DebugPrinter {
    *  \param str  color code
    *  \details
    *  Assumes a `bash` compatible terminal and sets the `operator()`
-   *  highlighting color (also used for `dout_HERE` and `dout_VAR`), for example
+   *  highlighting color (also used for `dout_HERE` and `dout_VAL`), for example
    *  red == "0;31" (default). Example usage:
    *  ~~~{.cpp}
    *      dout.set_color("1;34");
@@ -744,7 +744,7 @@ static DebugPrinter& dout = *new DebugPrinter;
  *  ~~~
  * \hideinitializer
  */
-#define dout_VAL(...) fsc::dout(#__VA_ARGS__, __VA_ARGS__, " = ");
+#define dout_VAL(...) fsc::dout(#__VA_ARGS__, (__VA_ARGS__), " = ");
 
 /** \brief Print demangled type information of given type.
  *  \param ...  can't be an incomplete type.
