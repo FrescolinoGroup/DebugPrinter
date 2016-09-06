@@ -1,13 +1,11 @@
 # general settings
 cmake_minimum_required (VERSION 3.0)
-project(DebugPrinter)
+project(DebugPrinter
+        VERSION 2015.1110)
 
 enable_testing()
 
 set(FSC_WEBSITE ${PROJECT_SOURCE_DIR}/../../website/frescolino)
-set(CMAKE_MAJOR_VERSION 2015)
-set(CMAKE_MINOR_VERSION 1110)
-set(CMAKE_PATCH_VERSION 0)
 
 # if additional cmake modules are needed
 list(APPEND CMAKE_MODULE_PATH 

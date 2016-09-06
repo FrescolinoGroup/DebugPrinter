@@ -2,12 +2,12 @@
  * 
  * \mainpage
  * \copydoc DebugPrinter.hpp
- * \copydoc fsc::DebugPrinter
+ * \copydetails fsc::DebugPrinter
  * 
  * \file       DebugPrinter.hpp
  * \brief      DebugPrinter header-only lib.
  * >           Creates a static object named `dout` and defines debugging macros.
- * \version    2015.1110
+ * \version    $(PROJECT_VERSION)
  * \author
  * Year      | Name
  * :-------: | -------------

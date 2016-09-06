@@ -38,7 +38,7 @@ PROJECT_NAME           = "@CMAKE_PROJECT_NAME@"
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = @CMAKE_MAJOR_VERSION@.@CMAKE_MINOR_VERSION@.@CMAKE_PATCH_VERSION@
+PROJECT_NUMBER         = @PROJECT_VERSION@
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -864,7 +864,7 @@ IMAGE_PATH             =
 # code is scanned, but not when the output code is generated. If lines are added
 # or removed, the anchors will not be placed correctly.
 
-INPUT_FILTER           =
+INPUT_FILTER           = "sed -e 's/$[(]PROJECT_VERSION)/@PROJECT_VERSION@/'"
 
 # The FILTER_PATTERNS tag can be used to specify filters on a per file pattern
 # basis. Doxygen will compare the file name with each pattern and apply the
@@ -1042,7 +1042,7 @@ GENERATE_HTML          = YES
 # The default directory is: html.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_OUTPUT            = @CMAKE_MAJOR_VERSION@.@CMAKE_MINOR_VERSION@
+HTML_OUTPUT            = @PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@
 
 # The HTML_FILE_EXTENSION tag can be used to specify the file extension for each
 # generated HTML page (for example: .htm, .php, .asp).
