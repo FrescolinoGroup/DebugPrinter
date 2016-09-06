@@ -1,5 +1,9 @@
 /** ****************************************************************************
  * 
+ * \mainpage
+ * \copydoc DebugPrinter.hpp
+ * \copydoc fsc::DebugPrinter
+ * 
  * \file       DebugPrinter.hpp
  * \brief      DebugPrinter header-only lib.
  * >           Creates a static object named `dout` and defines debugging macros.
@@ -22,7 +26,7 @@
  * 
  * \section dummy &nbsp;
  * \subsection Compilation Compilation
- *
+ * 
  * DebugPrinter requires C++14.
  * 
  * Link with `-rdynamic` in order to properly get `stack()` frame names and
