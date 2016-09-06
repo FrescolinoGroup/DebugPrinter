@@ -1,0 +1,1 @@
+Creates a static object named dout and defines debugging macros.
