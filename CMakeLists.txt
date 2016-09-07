@@ -1,5 +1,6 @@
 # general settings
 cmake_minimum_required (VERSION 3.0)
+
 project(DebugPrinter
         VERSION 2015.1110)
 

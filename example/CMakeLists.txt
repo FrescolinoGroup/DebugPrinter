@@ -1,3 +1,5 @@
+set(CMAKE_CXX_FLAGS "-std=c++14 -O0 -Werror -Wall -Wextra -Wpedantic")
+
 #=================== add all example ===================
 file(GLOB_RECURSE AllExample "." "*.cpp")
 foreach(example ${AllExample})

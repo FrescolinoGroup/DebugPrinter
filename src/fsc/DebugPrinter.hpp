@@ -3,6 +3,11 @@
  * \mainpage
  * \copydoc DebugPrinter.hpp
  * \copydetails fsc::DebugPrinter
+ *
+ * \example 01_types.cpp
+ * \example 02_flow.cpp
+ * \example 03_advanced.cpp
+ *
  * 
  * \file       DebugPrinter.hpp
  * \brief      DebugPrinter header-only lib.
@@ -29,7 +34,7 @@
  * 
  * DebugPrinter requires C++14.
  * 
- * Link with `-rdynamic` in order to properly get `stack()` frame names and
+ * Link with `-rdynamic` in order to get proper `stack()` frame names and
  * useful `dout_FUNC` output.
  * 
  * _Note: compiler optimisations may inline functions (shorter stack)._
@@ -43,10 +48,10 @@
  * Pass `DEBUGPRINTER_NO_EXECINFO` flag on Windows (makes `stack()`,
  * `dout_STACK` and `dout_FUNC` trivial).
  * 
- * Pass `DEBUGPRINTER_NO_CXXABI` if you don't have a _cxxabi_ demangle call 
- * (translates raw type symbols, i.e. `typeid(std::string).name()` output `Ss`
- * to `std::string`) in your libc distribution. The stack and type methods will
- * then print raw stack frame names and a _c++filt_-ready output.
+ * Pass `DEBUGPRINTER_NO_CXXABI` if you don't have a _cxxabi_ demangle call in
+ * your libc distribution (this translates raw type symbols, i.e. the
+ * `typeid(std::string).name()` output `Ss` to `std::string`). The stack and
+ * type methods will then print the mangled names and a `c++filt`-ready output.
  * 
  * Pass `DEBUGPRINTER_NO_SIGNALS` to turn off automatic stack tracing when 
  * certain fatal signals occur. Passing this flag is recommended on
@@ -101,16 +106,17 @@ namespace fsc {
 /** \brief Class for global static `dout` object
  * 
  *  \section dummy &nbsp;
- *  \subsection Usage Usage
- *  For details, see the documentation for fsc::DebugPrinter member functions
- *  and DebugPrinter.hpp macros.
+ *  \subsection Usage Quick Usage Reference
+ *  For details, consult the Member Function Documentation of fsc::DebugPrinter,
+ *  the Macros section of DebugPrinter.hpp, as well as the 
+ *  <a href="examples.html">Examples</a>.
  *  ~~~{.cpp}
- *      #include <DebugPrinter.hpp>
+ *      #include <fsc/DebugPrinter.hpp>
  *      // ...
  * 
  *      // basic usage:
  * 
- *      dout_HERE                      // print current file and line
+ *      dout_HERE                      // print current file, line and function
  *      dout_FUNC                      // print full current function signature
  *      dout_STACK                     // print stack trace
  *      dout_TYPE(std::map<T,U>)       // print given type
@@ -125,7 +131,7 @@ namespace fsc {
  *      using fsc::dout;
  * 
  *      dout << "foo" << std::endl;
- *      dout, var , 5, " bar ", 6 << " foobar " << 7, 8, std::endl;
+ *      dout, var , 5, " bar ", 6, " foobar ", 7, 8, std::endl;
  * 
  *      dout(object);                  // highlight object
  *      dout(object, label, " at ");   // highlight label, object and separator
@@ -217,7 +223,7 @@ class DebugPrinter {
    *  \param prec  desired precision
    *  \details Default == 5. Example usage:
    *  ~~~{.cpp}
-   *      dout.set_precision(12);
+   *      dout.set_precision(13);
    *  ~~~
    */
   inline void set_precision(const std::streamsize prec) noexcept { prec_ = prec; }
