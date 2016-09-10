@@ -10,6 +10,8 @@
 //~ #define DEBUGPRINTER_NO_CXXABI      // optional to turn off name demangling
 #include <fsc/DebugPrinter.hpp>
 
+#include <vector>
+
 template <typename T, typename U>
 class Foo { public:
     Foo() {
@@ -17,7 +19,7 @@ class Foo { public:
         dout_FUNC                       // print current function signature
     }
     template<typename R>
-    R member(T, U) {
+    R method(T, U) {
         dout_HERE
         dout_TYPE(R);                   // print full type
         dout_FUNC
@@ -53,11 +55,11 @@ int main() {
     using t2 = Foo<int, char*>;
     using t3 = size_t;
     t2 my_var2;                         // calls constructor of Foo
-    my_var2.member<t3>(0, nullptr);     // calls member of Foo
+    my_var2.method<t3>(0, nullptr);     // calls method of Foo
 
     dout_HERE
 
-    dout_TYPE_OF(&t2::member<t3>);
+    dout_TYPE_OF(&t2::method<t3>);
 
     return 0;
 

@@ -96,6 +96,12 @@
 #include <map>
 #endif // DEBUGPRINTER_NO_SIGNALS
 
+#if defined (WIN32) || defined (_WIN32)  // TODO: this can be improved a lot
+#define DEBUGPRINTER_DIRSEP '\\'
+#else
+#define DEBUGPRINTER_DIRSEP '/'
+#endif
+
 #endif // DEBUGPRINTER_OFF
 
 /** \brief General fsc namespace */
@@ -474,6 +480,10 @@ class DebugPrinter {
     }
     static bool pausecheck() { return true; }
 
+    inline std::string filemacro_name(const std::string str) const {
+      return str.substr(str.rfind(DEBUGPRINTER_DIRSEP)+1);
+    }
+
   } const detail_{*this};
   /// \endcond
 
@@ -718,8 +728,9 @@ static DebugPrinter& dout = *new DebugPrinter;
  *  ~~~
  * \hideinitializer
  */
-#define dout_HERE fsc::dout(__FILE__ ,         std::to_string(__LINE__)        \
-                                      + " (" + std::string(__func__) + ")",":");
+#define dout_HERE fsc::dout(fsc::dout.detail_.filemacro_name(__FILE__),        \
+                            std::to_string(__LINE__)                           \
+                            + " (" + std::string(__func__) + ")",":");        //
 
 /** \brief Print current function signature
  *  \details Example usage:

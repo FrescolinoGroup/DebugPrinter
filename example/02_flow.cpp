@@ -19,7 +19,7 @@ void func1() { func2(); }
 
 void segfault_function() {
     dout_HERE
-    *(int*)0 = 0;
+    *(volatile int*)0 = 0;
 }
 
 int main() {

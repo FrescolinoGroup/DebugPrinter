@@ -48,7 +48,7 @@ int main() {
 
     dout_HERE
 
-    dout.stack(100, false, 0);          // show whole libc stack
+    dout.stack(100, false, 0);          // show complete libc stack
 
     return 0;
 
