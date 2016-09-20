@@ -2,7 +2,9 @@
 cmake_minimum_required (VERSION 3.0)
 
 # compiler: set the compiler BEFORE the project command
+#~ set(CMAKE_C_COMPILER "gcc")
 #~ set(CMAKE_CXX_COMPILER "g++")
+#~ set(CMAKE_C_COMPILER "clang")
 #~ set(CMAKE_CXX_COMPILER "clang++")
 
 project(DebugPrinter
