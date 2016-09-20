@@ -1,0 +1,51 @@
+language: cpp
+sudo: false
+
+matrix:
+  include:
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - george-edison55-precise-backports
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-5
+            - cmake
+            - cmake-data
+      env: COMPILER=g++-5
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - george-edison55-precise-backports
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.7
+          packages:
+            - clang-3.7
+            - cmake
+            - cmake-data
+      env: COMPILER=clang++-3.7
+
+install:
+    - mkdir build
+    - cd build
+    # add dependency material (cmake_extensions and catch)
+    - mkdir depencency && cd depencency && export DEPENDENCY=$PWD
+    - mkdir install && cd install && export INSTALL=$PWD
+    - mkdir include && cd include && export INCLUDE=$PWD
+    # catch
+    - wget https://raw.githubusercontent.com/philsquared/Catch/master/single_include/catch.hpp
+    - cd $DEPENDENCY
+    # fsc.cmake_extensions
+    - git clone https://github.com/FrescolinoGroup/cmake_extensions.git && cd cmake_extensions && mkdir build && cd build && cmake .. -DCMAKE_INSTALL_PREFIX=$INSTALL && make softinstall
+    - cd $DEPENDENCY
+    - export CPLUS_INCLUDE_PATH=$INCLUDE:$CPLUS_INCLUDE_PATH
+    - cd ..
+    # run cmake and make
+    - cmake .. -DCMAKE_MODULE_PATH=$INCLUDE -DCMAKE_CXX_COMPILER=$COMPILER
+    - make
+
+# run test
+script:
+    - make test
