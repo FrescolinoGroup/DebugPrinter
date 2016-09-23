@@ -22,6 +22,7 @@ matrix:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.8
           packages:
+            - g++-5
             - clang-3.8
             - cmake
             - cmake-data
@@ -49,3 +50,8 @@ install:
 # run test
 script:
     - make test
+
+no known conversion from 'typename std::remove_reference<basic_ofstream<char> &>::type'
+                            (aka 'std::basic_ofstream<char>') to
+                                 'std::ostream &'
+                            (aka 'basic_ostream<char> &') for 1st argument
