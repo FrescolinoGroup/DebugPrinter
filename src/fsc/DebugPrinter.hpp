@@ -494,7 +494,7 @@ class DebugPrinter {
   private:
 
   std::ostream * outstream;                      // output stream
-  std::shared_ptr<std::ostream> outstream_mm;    // managed output stream
+  std::shared_ptr<std::ofstream> outstream_mm;    // managed output stream
   std::streamsize prec_;                         // precision
   std::string hcol_;                             // highlighting color
   std::string hcol_r_;                           // neutral color
