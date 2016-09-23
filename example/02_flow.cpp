@@ -29,7 +29,7 @@ int main() {
     dout_PAUSE()                        // take a break
 
     for(int i = 0; i < 10; ++i) {
-        dout_VAL(i);
+        dout_VAL(i)
         dout_PAUSE(i<5 && i%2==0)       // pause on condition
     }
 

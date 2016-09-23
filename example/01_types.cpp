@@ -33,22 +33,22 @@ int main() {
     dout_HERE                           // print position, file and function
 
     using t1 = std::vector<int>;
-    dout_TYPE(t1);                      // print full type
+    dout_TYPE(t1)                       // print full type
     dout_TYPE(volatile const int&)
     dout_TYPE(std::string)
 
     dout_HERE
 
     t1 my_var;
-    dout_TYPE_OF(42);                   // print runtime type and valueness
-    dout_TYPE_OF(my_var[0]);
-    dout_TYPE_OF(std::move(my_var[0]));
+    dout_TYPE_OF(42)                    // print runtime type and valueness
+    dout_TYPE_OF(my_var[0])
+    dout_TYPE_OF(std::move(my_var[0]))
 
     dout_HERE
 
     my_var.push_back(42);
-    dout_VAL(my_var[0]);                // print highlighted var=val pair
-    dout_VAL(my_var);                   // std::vector has no ostream operator<<
+    dout_VAL(my_var[0])                 // print highlighted var=val pair
+    dout_VAL(my_var)                    // std::vector has no ostream operator<<
 
     dout_HERE
 
@@ -59,7 +59,7 @@ int main() {
 
     dout_HERE
 
-    dout_TYPE_OF(&t2::method<t3>);
+    dout_TYPE_OF(&t2::method<t3>)
 
     return 0;
 
