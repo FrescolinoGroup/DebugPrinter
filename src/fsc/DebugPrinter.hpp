@@ -221,9 +221,13 @@ class DebugPrinter {
   inline auto operator=(T && os)
     ->  std::enable_if_t<std::is_move_assignable<T>::value
                       && std::is_rvalue_reference<decltype(os)>::value> {
-    outstream_mm = std::shared_ptr<std::ofstream>(new T(std::move(os)));
+    outstream_mm = std::shared_ptr<std::ostream>(new T(std::move(os)));
     outstream = outstream_mm.get();
   }
+
+  /// \brief Deleted copy assignment
+  template <typename T>
+  inline auto operator=(const T &) = delete;
 
   /** \brief Number of displayed decimal digits
    *  \param prec  desired precision
@@ -494,7 +498,7 @@ class DebugPrinter {
   private:
 
   std::ostream * outstream;                      // output stream
-  std::shared_ptr<std::ofstream> outstream_mm;    // managed output stream
+  std::shared_ptr<std::ostream> outstream_mm;    // managed output stream
   std::streamsize prec_;                         // precision
   std::string hcol_;                             // highlighting color
   std::string hcol_r_;                           // neutral color
