@@ -201,7 +201,7 @@ class DebugPrinter {
    *  The DebugPrinter assumes that the object is managed elsewhere (to have it
    *  take ownership, check the assigment operator for moving streams).
    */
-  //~ inline void operator=(std::ostream & os) noexcept { outstream = &os; }
+  inline void operator=(std::ostream & os) noexcept { outstream = &os; }
 
   /** \brief Assignment operator for moving streams
    *  \param os  output stream to take over
@@ -217,42 +217,13 @@ class DebugPrinter {
    *  Note: trying to move `std::cout` (or other static standard streams)
    *  is considered a bad life choice.
    */
-  //~ template <typename T>
-  //~ inline auto operator=(T && os)
-    //~ ->  std::enable_if_t<std::is_move_assignable<T>::value
-                      //~ && std::is_rvalue_reference<decltype(os)>::value> {
-    //~ outstream_mm = std::shared_ptr<std::ostream>(new T(std::move(os)));
-    //~ outstream = outstream_mm.get();
-  //~ }
-
-  template<bool B, typename T>
-  struct opassign_impl {
-    template<typename T2,typename T3>
-    static void handler(T && os, T2& outstream, T3& outstream_mm) {
-      //~ (void)os;
-      outstream_mm = std::shared_ptr<std::ostream>(new T(std::move(os)));
-      outstream = outstream_mm.get();
-    }
-  };
-
-  template<typename T>
-  struct opassign_impl<false, T> {
-    template<typename T2,typename T3>
-    static void handler(T & os, T2& outstream, T3&) {
-      outstream = &os;
-      //~ (void)os;
-    }
-  };
-
   template <typename T>
-  inline void operator=(T && os) {
-    opassign_impl<std::is_rvalue_reference<T&&>::value,
-                  std::remove_reference_t<T> >::handler(std::forward<T>(os), outstream, outstream_mm);
+  inline auto operator=(T && os)
+    ->  std::enable_if_t<std::is_move_assignable<T>::value
+                      && std::is_rvalue_reference<decltype(os)>::value> {
+    outstream_mm = std::shared_ptr<std::ostream>(new T(std::move(os)));
+    outstream = outstream_mm.get();
   }
-
-  //~ /// \brief Deleted copy assignment
-  //~ template <typename T>
-  //~ inline auto operator=(const T &) = delete;
 
   /** \brief Number of displayed decimal digits
    *  \param prec  desired precision
