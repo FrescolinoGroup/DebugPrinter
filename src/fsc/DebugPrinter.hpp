@@ -221,7 +221,7 @@ class DebugPrinter {
   inline auto operator=(T && os)
     ->  std::enable_if_t<std::is_move_assignable<T>::value
                       && std::is_rvalue_reference<decltype(os)>::value> {
-    outstream_mm = std::shared_ptr<std::ostream>(new T(std::move(os)));
+    outstream_mm = std::shared_ptr<std::ofstream>(new T(std::move(os)));
     outstream = outstream_mm.get();
   }
 
