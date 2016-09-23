@@ -22,7 +22,8 @@ matrix:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.8
           packages:
-            - g++-5
+            # needs libc headers from g++-5 for std::move STL support
+            - libstdc++-5-dev
             - clang-3.8
             - cmake
             - cmake-data
