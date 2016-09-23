@@ -51,7 +51,3 @@ install:
 script:
     - make test
 
-no known conversion from 'typename std::remove_reference<basic_ofstream<char> &>::type'
-                            (aka 'std::basic_ofstream<char>') to
-                                 'std::ostream &'
-                            (aka 'basic_ostream<char> &') for 1st argument
